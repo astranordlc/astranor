@@ -1,6 +1,7 @@
 const supabaseUrl = 'https://wjtxtpnnmwmjguwgmymd.supabase.co';
 const supabaseKey = 'sb_publishable_5Z7cq0CgHgRsUJOkinbpBQ_LIejxJnl';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 /* =========================
    REGISTER
