@@ -3,111 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Astranor</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<!-- Supabase (MUST be loaded before auth.js) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/auth.js" defer></script>
+
 </head>
+
 <body>
+
 <div class="background-glow"></div>
 
 <div class="particles">
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
 </div>
+
+<!-- NAV -->
 <nav>
-  <div class="logo"><img src="assets/logo.png" alt="Astranor">ASTRANOR</div>
+  <div class="logo">
+    <img src="assets/logo.png" alt="logo">
+    ASTRANOR
+  </div>
+
   <div class="menu">
     <a href="index.html">Home</a>
-    <a href="index.html#download">Download</a>
-    <a href="index.html#premium">Premium</a>
-    <a href="index.html#news">News</a>
-    <a href="https://discord.gg/DVDjwbnAU9" target="_blank">Discord</a>
+    <a href="#features">Features</a>
+    <a href="#news">News</a>
     <a href="login.html">Login</a>
   </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
 
-<div class="hero-left">
+  <div class="hero-left">
 
-<div class="badge">
-    ✦ ASTRANOR 1.21.4
-</div>
+    <div class="badge">✦ ASTRANOR 1.21.4</div>
 
-<h1>ASTRANOR</h1>
+    <h1>ASTRANOR</h1>
 
-<h2>Next Generation Utility Client</h2>
+    <h2>Next Generation Utility Client</h2>
 
-<p>
-Powerful, optimized and constantly updated utility client
-built for performance, stability and modern visuals.
-</p>
+    <p>
+      Powerful, optimized and constantly updated utility client
+      built for performance, stability and modern visuals.
+    </p>
 
-<div class="hero-buttons">
-    <a class="btn primary" href="#">DOWNLOAD LITE</a>
-    <a class="btn secondary" href="#">BUY PREMIUM</a>
-</div>
+    <div class="hero-buttons">
+      <a class="btn primary" href="#">DOWNLOAD LITE</a>
+      <a class="btn secondary" href="#">BUY PREMIUM</a>
+    </div>
 
-<div class="stats">
+  </div>
 
-<div class="stat">
-    <h3>1000+</h3>
-    <span>Users</span>
-</div>
-
-<div class="stat">
-    <h3>99.9%</h3>
-    <span>Uptime</span>
-</div>
-
-<div class="stat">
-    <h3>24/7</h3>
-    <span>Support</span>
-</div>
-
-</div>
-
-</div>
-
-<div class="hero-right">
-    <img src="assets/logo.png">
-</div>
+  <div class="hero-right">
+    <img src="assets/logo.png" alt="logo">
+  </div>
 
 </section>
+
+<!-- STATUS -->
 <section class="status-section">
-
-<div class="status-card">
-
-<div class="status-dot"></div>
-
-Server Status:
-<span>Online</span>
-
-</div>
-
-</section>
-<section class="features-section">
-  <h2>Features</h2>
-  <div class="cards">
-    <div class="card"><h3>Performance</h3><p>Optimized rendering and lightweight architecture.</p></div>
-    <div class="card"><h3>Security</h3><p>Protected account system and future HWID support.</p></div>
-    <div class="card"><h3>Updates</h3><p>Frequent patches and feature releases.</p></div>
-    <div class="card"><h3>Customization</h3><p>Modern UI and flexible configuration.</p></div>
+  <div class="status-card">
+    <div class="status-dot"></div>
+    Server Status: <span>Online</span>
   </div>
 </section>
 
-<section class="news-section">
-  <h2>Latest News</h2>
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <h2 class="section-title">Features</h2>
+
   <div class="cards">
-    <div class="card"><h3>Astranor Launch</h3><p>Official Astranor website is now online.</p></div>
-    <div class="card"><h3>Premium Launch</h3><p>Premium system is now available.</p></div>
+    <div class="card">
+      <h3>Performance</h3>
+      <p>Optimized rendering and lightweight architecture.</p>
+    </div>
+
+    <div class="card">
+      <h3>Security</h3>
+      <p>Protected authentication system via Supabase.</p>
+    </div>
+
+    <div class="card">
+      <h3>Updates</h3>
+      <p>Frequent patches and feature releases.</p>
+    </div>
+
+    <div class="card">
+      <h3>UI</h3>
+      <p>Modern glassmorphism neon design system.</p>
+    </div>
   </div>
 </section>
 
-<footer>© 2026 Astranor. All rights reserved.</footer>
+<!-- NEWS -->
+<section class="news-section" id="news">
+  <h2 class="section-title">Latest News</h2>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Launch</h3>
+      <p>Astranor website is now live.</p>
+    </div>
+
+    <div class="card">
+      <h3>System Update</h3>
+      <p>Auth system fully upgraded.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  © 2026 Astranor. All rights reserved.
+</footer>
+
+<!-- AUTH SCRIPT (IMPORTANT) -->
+<script src="js/auth.js" defer></script>
+
 </body>
 </html>
