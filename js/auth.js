@@ -9,12 +9,17 @@ document.getElementById('registerForm')?.addEventListener('submit', async (e) =>
   e.preventDefault();
 
   const form = e.target;
+
   const email = form.elements.email.value;
   const password = form.elements.password.value;
+  const username = form.elements.username.value;
 
-  const { error } = await supabase.auth.signUp({
+  const { error } = await supabaseClient.auth.signUp({
     email,
-    password
+    password,
+    options: {
+      data: { username }
+    }
   });
 
   if (error) {
@@ -22,9 +27,8 @@ document.getElementById('registerForm')?.addEventListener('submit', async (e) =>
     return;
   }
 
-  alert('Check your email to confirm registration!');
+  alert("Account created! Check your email.");
 });
-
 
 /* =========================
    LOGIN
@@ -33,10 +37,11 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const form = e.target;
+
   const email = form.elements.email.value;
   const password = form.elements.password.value;
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
   });
@@ -46,7 +51,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     return;
   }
 
-  window.location.href = 'dashboard.html';
+  window.location.href = "dashboard.html";
 });
 
 
@@ -54,32 +59,18 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
    DASHBOARD PROTECTION
 ========================= */
 window.addEventListener('DOMContentLoaded', async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await supabaseClient.auth.getSession();
 
   if (!session) {
-    window.location.href = 'login.html';
+    window.location.href = "login.html";
     return;
   }
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await supabaseClient.auth.getUser();
 
-  if (!user) {
-    window.location.href = 'login.html';
-    return;
-  }
-
-  const usernameEl = document.getElementById('username');
-  if (usernameEl) {
-    usernameEl.innerText = user.email;
-  }
-
-  const planEl = document.getElementById('plan');
-  if (planEl) planEl.innerText = 'Lite';
-
-  const hwidEl = document.getElementById('hwid');
-  if (hwidEl) hwidEl.innerText = 'Not Bound';
+  document.getElementById('username').innerText =
+    user?.user_metadata?.username || user.email;
 });
-
 
 /* =========================
    LOGOUT
