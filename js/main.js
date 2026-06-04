@@ -1,10 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const cards = document.querySelectorAll(".card");
-
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
+            if(entry.isIntersecting){
                 entry.target.classList.add("show");
             }
         });
@@ -12,8 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
         threshold: 0.15
     });
 
-    cards.forEach(card => {
+    document.querySelectorAll(".card").forEach(card=>{
         observer.observe(card);
+    });
+
+    document.querySelectorAll("section").forEach(section=>{
+        observer.observe(section);
     });
 
 });
