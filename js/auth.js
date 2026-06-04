@@ -10,12 +10,11 @@ document.getElementById('registerForm')?.addEventListener('submit', async (e) =>
   e.preventDefault();
 
   const form = e.target;
-
   const email = form.elements.email.value;
   const password = form.elements.password.value;
   const username = form.elements.username.value;
 
-  const { error } = await supabaseClient.auth.signUp({
+  const { data, error } = await supabaseClient.auth.signUp({
     email,
     password,
     options: {
@@ -23,12 +22,9 @@ document.getElementById('registerForm')?.addEventListener('submit', async (e) =>
     }
   });
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+  if (error) return alert(error.message);
 
-  alert("Account created! Check your email.");
+  alert("Check your email to confirm account!");
 });
 
 /* =========================
@@ -38,45 +34,56 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const form = e.target;
-
   const email = form.elements.email.value;
   const password = form.elements.password.value;
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
   });
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+  if (error) return alert(error.message);
 
   window.location.href = "dashboard.html";
 });
 
-
 /* =========================
-   DASHBOARD PROTECTION
+   AUTH GUARD (SaaS STYLE)
 ========================= */
-window.addEventListener('DOMContentLoaded', async () => {
+async function requireAuth() {
   const { data: { session } } = await supabaseClient.auth.getSession();
 
   if (!session) {
     window.location.href = "login.html";
-    return;
+    return null;
   }
+
+  return session;
+}
+
+/* =========================
+   DASHBOARD INIT
+========================= */
+window.addEventListener('DOMContentLoaded', async () => {
+  const session = await requireAuth();
+  if (!session) return;
 
   const { data: { user } } = await supabaseClient.auth.getUser();
 
-  document.getElementById('username').innerText =
+  const username =
     user?.user_metadata?.username || user.email;
+
+  document.getElementById('username')?.innerText = username;
+
+  // default SaaS fields
+  document.getElementById('plan')?.innerText = 'Free';
+  document.getElementById('hwid')?.innerText = 'Not Bound';
 });
 
 /* =========================
    LOGOUT
 ========================= */
 document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-  await supabase.auth.signOut();
-  window.location.href = 'login.html';
+  await supabaseClient.auth.signOut();
+  window.location.href = "login.html";
 });
