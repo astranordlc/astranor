@@ -1,20 +1,19 @@
 const supabaseUrl = 'https://wjtxtpnnmwmjguwgmymd.supabase.co';
 const supabaseKey = 'sb_publishable_5Z7cq0CgHgRsUJOkinbpBQ_LIejxJnl';
 
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+const sb = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* =========================
-   REGISTER
-========================= */
+/* ================= REGISTER ================= */
 document.getElementById('registerForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const form = e.target;
+
   const email = form.elements.email.value;
   const password = form.elements.password.value;
   const username = form.elements.username.value;
 
-  const { data, error } = await supabaseClient.auth.signUp({
+  const { data, error } = await sb.auth.signUp({
     email,
     password,
     options: {
@@ -22,68 +21,53 @@ document.getElementById('registerForm')?.addEventListener('submit', async (e) =>
     }
   });
 
-  if (error) return alert(error.message);
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
-  alert("Check your email to confirm account!");
+  alert("Account created! Check email.");
 });
 
-/* =========================
-   LOGIN
-========================= */
+/* ================= LOGIN ================= */
 document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const form = e.target;
+
   const email = form.elements.email.value;
   const password = form.elements.password.value;
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
+  const { error } = await sb.auth.signInWithPassword({
     email,
     password
   });
 
-  if (error) return alert(error.message);
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
   window.location.href = "dashboard.html";
 });
 
-/* =========================
-   AUTH GUARD (SaaS STYLE)
-========================= */
-async function requireAuth() {
-  const { data: { session } } = await supabaseClient.auth.getSession();
+/* ================= DASHBOARD GUARD ================= */
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
 
   if (!session) {
     window.location.href = "login.html";
-    return null;
+    return;
   }
 
-  return session;
-}
+  const { data: { user } } = await sb.auth.getUser();
 
-/* =========================
-   DASHBOARD INIT
-========================= */
-window.addEventListener('DOMContentLoaded', async () => {
-  const session = await requireAuth();
-  if (!session) return;
-
-  const { data: { user } } = await supabaseClient.auth.getUser();
-
-  const username =
-    user?.user_metadata?.username || user.email;
-
-  document.getElementById('username')?.innerText = username;
-
-  // default SaaS fields
-  document.getElementById('plan')?.innerText = 'Free';
-  document.getElementById('hwid')?.innerText = 'Not Bound';
+  const el = document.getElementById('username');
+  if (el) el.innerText = user.email;
 });
 
-/* =========================
-   LOGOUT
-========================= */
+/* ================= LOGOUT ================= */
 document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-  await supabaseClient.auth.signOut();
+  await sb.auth.signOut();
   window.location.href = "login.html";
 });
