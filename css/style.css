@@ -213,10 +213,9 @@ nav{
 }
 
 /* ===== SECTIONS (FIXED BUG) ===== */
-section{
-    width:100%;
-    opacity:1;
-    transform:none;
+section {
+    opacity: 1 !important;
+    transform: none !important;
 }
 
 /* ===== FEATURES / NEWS ===== */
