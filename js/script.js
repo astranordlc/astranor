@@ -1,16 +1,23 @@
 const SUPABASE_URL = 'https://wjtxtpnnmwmjguwgmymd.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_5Z7cq0CgHgRsUJOkinbpBQ_LIejxJnl';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
-});
-
+let supabase = null;
 let currentUser = null;
 let currentPage = 'home';
+
+function initSupabase() {
+  if (window.supabase && !supabase) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true
+      }
+    });
+    return true;
+  }
+  return false;
+}
 
 function navigate(page) {
   currentPage = page;
@@ -100,6 +107,12 @@ async function handleRegister() {
     return;
   }
 
+  if (!initSupabase()) {
+    errorEl.textContent = 'Библиотека Supabase не загрузилась. Обнови страницу.';
+    errorEl.classList.add('visible');
+    return;
+  }
+
   try {
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -159,6 +172,12 @@ async function handleLogin() {
     return;
   }
 
+  if (!initSupabase()) {
+    errorEl.textContent = 'Библиотека Supabase не загрузилась. Обнови страницу.';
+    errorEl.classList.add('visible');
+    return;
+  }
+
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -183,7 +202,9 @@ async function handleLogin() {
 }
 
 async function handleLogout() {
-  await supabase.auth.signOut();
+  if (supabase) {
+    await supabase.auth.signOut();
+  }
   currentUser = null;
   updateAuthUI();
   updateProfileUI();
@@ -218,6 +239,8 @@ async function updateProfileUI() {
 
   document.getElementById('profileEmail').textContent = currentUser.email;
 
+  if (!supabase) return;
+
   try {
     const { data, error } = await supabase
       .from('profiles')
@@ -227,8 +250,8 @@ async function updateProfileUI() {
 
     if (error) {
       if (error.code === '42P01') {
-        document.querySelector('.profile-hwid p').textContent = 'Таблица profiles не найдена. Выполни supabase_setup.sql в SQL Editor Supabase.';
-        document.querySelector('.profile-hwid p').style.color = '#ef4444';
+        const el = document.querySelector('.profile-hwid p');
+        if (el) { el.textContent = 'Таблица profiles не найдена. Выполни supabase_setup.sql в SQL Editor Supabase.'; el.style.color = '#ef4444'; }
         return;
       }
       console.error('Profile fetch error:', error);
@@ -287,21 +310,25 @@ async function copyHWID() {
   }
 }
 
-supabase.auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_IN' && session) {
-    currentUser = session.user;
-    updateAuthUI();
-    updateProfileUI();
-  } else if (event === 'SIGNED_OUT') {
-    currentUser = null;
-    updateAuthUI();
-    updateProfileUI();
-  } else if (event === 'TOKEN_REFRESHED') {
-    currentUser = session?.user || null;
-  }
-});
+function setupAuthListener() {
+  if (!supabase) return;
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+      updateAuthUI();
+      updateProfileUI();
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null;
+      updateAuthUI();
+      updateProfileUI();
+    } else if (event === 'TOKEN_REFRESHED') {
+      currentUser = session?.user || null;
+    }
+  });
+}
 
-(async () => {
+async function restoreSession() {
+  if (!initSupabase()) return;
   try {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
@@ -311,7 +338,20 @@ supabase.auth.onAuthStateChange((event, session) => {
   } catch (err) {
     console.error('Session restore error:', err);
   }
-})();
+}
+
+function waitForSupabase(retries) {
+  if (initSupabase()) {
+    setupAuthListener();
+    restoreSession();
+    return;
+  }
+  if (retries > 0) {
+    setTimeout(function(){ waitForSupabase(retries - 1); }, 500);
+  }
+}
+
+waitForSupabase(20);
 
 const style = document.createElement('style');
 style.textContent = `
