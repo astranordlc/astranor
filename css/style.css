@@ -1,7 +1,11 @@
-* {
+html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
 :root {
@@ -345,44 +349,6 @@ main {
 .highlight {
   color: var(--accent-light);
   font-weight: 600;
-}
-
-.video-section {
-  padding: 100px 32px;
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.video-section h2 {
-  font-size: 40px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.video-section p {
-  color: var(--text-color-alower);
-  font-size: 18px;
-  margin-bottom: 40px;
-}
-
-.video-player {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--card-border);
-  box-shadow: 0 8px 40px rgba(155, 89, 182, 0.15);
-}
-
-.video-player iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
 }
 
 .page-header {
@@ -946,13 +912,11 @@ main {
     font-size: 16px;
   }
 
-  .features-section,
-  .video-section {
+  .features-section {
     padding: 60px 16px;
   }
 
-  .features-header h2,
-  .video-section h2 {
+  .features-header h2 {
     font-size: 28px;
   }
 
