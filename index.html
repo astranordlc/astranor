@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Astranor DLC</title>
+<meta name="description" content="Astranor DLC - Ваш лучший выбор для Minecraft"/>
+<link rel="icon" type="image/png" href="Assets/logo.png"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<div id="app">
+  <header class="header">
+    <a class="logo" href="#" onclick="navigate('home')">
+      <img src="Assets/logo.png" alt="Astranor DLC" class="logo-img"/>
+      <span class="logo-text">Astranor DLC</span>
+    </a>
+    <nav class="header-nav">
+      <a href="#" class="active" onclick="navigate('home')">Главная</a>
+      <a href="#" onclick="navigate('tariffs')">Тарифы</a>
+      <a href="#" onclick="navigate('profile')">Личный профиль</a>
+    </nav>
+    <div class="header-right">
+      <div class="header-auth-actions" id="authButtons">
+        <button class="btn-outline" onclick="openModal('login')">Войти</button>
+        <button class="btn-fill" onclick="openModal('register')">Регистрация</button>
+      </div>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section id="page-home" class="page active">
+      <div class="hero-glow"></div>
+      <div class="hero-aurora-layer"></div>
+      <h1>Astranor DLC<br/><span class="gradient-text">Твой идеальный чит</span></h1>
+      <p class="subtext">Современные функции, топовая защита, быстрая производительность, частые обновления. Всё в нашем решении!</p>
+      <div class="hero-actions">
+        <button class="btn-fill" onclick="openModal('register')">
+          <i class="fa-regular fa-circle-user"></i> Начать
+        </button>
+      </div>
+
+      <section class="features-section">
+        <div class="features-header">
+          <h2>Почему выбирают нас</h2>
+          <p>Всё что нужно для идеальной игры</p>
+        </div>
+        <div class="feature-cards-grid">
+          <article class="feature-panel">
+            <div class="feature-panel-visual">
+              <span class="feature-panel-icon"><i class="fa-solid fa-users"></i></span>
+              <span class="feature-panel-badge">1,500+</span>
+            </div>
+            <div class="feature-panel-content">
+              <span class="feature-panel-index">01</span>
+              <h3>Сообщество</h3>
+              <p>Присоединяйся к <span class="highlight">1,500+</span> активных пользователей</p>
+              <p class="feature-panel-detail">Гайды, пресеты, фидбек и общий опыт от реальных игроков</p>
+            </div>
+          </article>
+          <article class="feature-panel">
+            <div class="feature-panel-visual">
+              <span class="feature-panel-icon"><i class="fa-solid fa-arrows-rotate"></i></span>
+              <span class="feature-panel-badge">SOON</span>
+            </div>
+            <div class="feature-panel-content">
+              <span class="feature-panel-index">02</span>
+              <h3>Обновления</h3>
+              <p>Регулярные обновления, свежие обходы и улучшения</p>
+              <p class="feature-panel-detail">Новые функции и фиксы выходят быстро и регулярно</p>
+            </div>
+          </article>
+          <article class="feature-panel">
+            <div class="feature-panel-visual">
+              <span class="feature-panel-icon"><i class="fa-solid fa-headset"></i></span>
+              <span class="feature-panel-badge">24/7</span>
+            </div>
+            <div class="feature-panel-content">
+              <span class="feature-panel-index">03</span>
+              <h3>Поддержка</h3>
+              <p>Наша команда всегда готова помочь с настройкой и доступом</p>
+              <p class="feature-panel-detail">Прямая помощь по настройке и вопросам без очередей</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="video-section">
+        <h2>Посмотри нашего клиента<br/>в действии</h2>
+        <p>Узнай как работает наше решение в реальной игре</p>
+        <div class="video-player">
+          <iframe src="https://www.youtube.com/embed/R2yv4UPqt8U" title="Astranor DLC Demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </section>
+    </section>
+
+    <section id="page-tariffs" class="page">
+      <div class="page-header">
+        <h1>Наши тарифы</h1>
+        <p>Выбери подходящий план для себя</p>
+      </div>
+      <div class="tariffs-grid">
+        <div class="tariff-card">
+          <div class="tariff-header">
+            <h3>Standart</h3>
+            <div class="tariff-price">899 ₽</div>
+            <p class="tariff-period">навсегда</p>
+          </div>
+          <ul class="tariff-features">
+            <li><i class="fa-solid fa-check"></i> Все функции чита</li>
+            <li><i class="fa-solid fa-check"></i> Обновления</li>
+            <li><i class="fa-solid fa-check"></i> Базовые обходы</li>
+            <li><i class="fa-solid fa-check"></i> Поддержка в чате</li>
+            <li><i class="fa-solid fa-xmark"></i> Приватные обходы</li>
+            <li><i class="fa-solid fa-xmark"></i> Ранний доступ к функциям</li>
+          </ul>
+          <button class="btn-fill" onclick="openModal('register')">Купить</button>
+        </div>
+        <div class="tariff-card tariff-popular">
+          <div class="tariff-badge">Популярный</div>
+          <div class="tariff-header">
+            <h3>Premium</h3>
+            <div class="tariff-price">1,499 ₽</div>
+            <p class="tariff-period">навсегда</p>
+          </div>
+          <ul class="tariff-features">
+            <li><i class="fa-solid fa-check"></i> Все функции чита</li>
+            <li><i class="fa-solid fa-check"></i> Обновления</li>
+            <li><i class="fa-solid fa-check"></i> Все обходы</li>
+            <li><i class="fa-solid fa-check"></i> Приватные обходы</li>
+            <li><i class="fa-solid fa-check"></i> Поддержка 24/7</li>
+            <li><i class="fa-solid fa-xmark"></i> Ранний доступ к функциям</li>
+          </ul>
+          <button class="btn-fill" onclick="openModal('register')">Купить</button>
+        </div>
+        <div class="tariff-card">
+          <div class="tariff-header">
+            <h3>Ultra</h3>
+            <div class="tariff-price">2,999 ₽</div>
+            <p class="tariff-period">навсегда</p>
+          </div>
+          <ul class="tariff-features">
+            <li><i class="fa-solid fa-check"></i> Все функции чита</li>
+            <li><i class="fa-solid fa-check"></i> Обновления</li>
+            <li><i class="fa-solid fa-check"></i> Приватные обходы</li>
+            <li><i class="fa-solid fa-check"></i> Ранний доступ к функциям</li>
+            <li><i class="fa-solid fa-check"></i> Поддержка 24/7</li>
+            <li><i class="fa-solid fa-check"></i> Приватный Discord канал</li>
+          </ul>
+          <button class="btn-fill" onclick="openModal('register')">Купить</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-profile" class="page">
+      <div class="page-header">
+        <h1>Личный профиль</h1>
+        <p>Ваша информация и HWID</p>
+      </div>
+
+      <div id="profileNotAuth">
+        <div class="profile-placeholder">
+          <i class="fa-solid fa-circle-user"></i>
+          <h3>Войдите в аккаунт</h3>
+          <p>Чтобы увидеть информацию профиля, необходимо авторизоваться</p>
+          <button class="btn-fill" onclick="openModal('login')">Войти</button>
+        </div>
+      </div>
+
+      <div id="profileContent" style="display:none">
+        <div class="profile-grid">
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <i class="fa-solid fa-user"></i>
+              <h3>Информация</h3>
+            </div>
+            <div class="profile-info">
+              <div class="profile-row">
+                <span class="profile-label">Email</span>
+                <span class="profile-value" id="profileEmail">-</span>
+              </div>
+              <div class="profile-row">
+                <span class="profile-label">Тариф</span>
+                <span class="profile-value" id="profileTariff">-</span>
+              </div>
+              <div class="profile-row">
+                <span class="profile-label">Дата регистрации</span>
+                <span class="profile-value" id="profileDate">-</span>
+              </div>
+            </div>
+          </div>
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <i class="fa-solid fa-microchip"></i>
+              <h3>HWID</h3>
+            </div>
+            <div class="profile-hwid">
+              <p>Ваш аппаратный идентификатор</p>
+              <div class="hwid-display" id="hwidDisplay">
+                <code id="hwidValue">-</code>
+                <button class="btn-icon" onclick="copyHWID()" title="Копировать">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </div>
+              <p class="hwid-info">HWID автоматически привязывается после запуска чита через лоадер</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-column">
+        <div class="footer-column-title"><i class="fa-solid fa-house"></i> Страницы</div>
+        <nav>
+          <a href="#" onclick="navigate('home')">Главная</a>
+          <a href="#" onclick="navigate('tariffs')">Тарифы</a>
+          <a href="#" onclick="navigate('profile')">Личный профиль</a>
+        </nav>
+      </div>
+      <div class="footer-column">
+        <div class="footer-column-title"><i class="fa-brands fa-telegram"></i> Связь</div>
+        <nav>
+          <a href="https://t.me/astranordlc" target="_blank" rel="noreferrer">
+            <i class="fa-brands fa-telegram"></i> Telegram
+          </a>
+          <a href="https://discord.gg/DVDjwbnAU9" target="_blank" rel="noreferrer">
+            <i class="fa-brands fa-discord"></i> Discord
+          </a>
+        </nav>
+      </div>
+      <div class="footer-column">
+        <div class="footer-column-title"><i class="fa-solid fa-user"></i> Аккаунт</div>
+        <nav>
+          <a href="#" onclick="openModal('login')">Войти</a>
+          <a href="#" onclick="openModal('register')">Регистрация</a>
+        </nav>
+      </div>
+    </div>
+    <div class="footer-line"></div>
+    <div class="footer-bottom">
+      <span class="footer-logo-text">Astranor DLC</span>
+      <div>&copy; Astranor DLC, 2026. All Rights Reserved</div>
+    </div>
+  </footer>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <nav>
+    <a href="#" onclick="navigate('home'); closeMobileMenu()">Главная</a>
+    <a href="#" onclick="navigate('tariffs'); closeMobileMenu()">Тарифы</a>
+    <a href="#" onclick="navigate('profile'); closeMobileMenu()">Личный профиль</a>
+  </nav>
+  <div class="mobile-menu-auth">
+    <button class="btn-outline" onclick="openModal('login'); closeMobileMenu()">Войти</button>
+    <button class="btn-fill" onclick="openModal('register'); closeMobileMenu()">Регистрация</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
