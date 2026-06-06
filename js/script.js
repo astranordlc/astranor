@@ -62,32 +62,6 @@ async function handleRegister() {
       return;
     }
 
-    if (data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert([
-        {
-          id: data.user.id,
-          email: email,
-          tariff: 'Нет',
-          hwid: '',
-          promo_codes: [],
-          created_at: new Date().toISOString()
-        }
-      ]);
-
-      if (profileError) {
-        if (profileError.code === '42P01') {
-          if (successEl) {
-            successEl.textContent = 'Регистрация успешна! Внимание: не создана таблица profiles в Supabase. Выполни supabase_setup.sql в SQL Editor.';
-            successEl.classList.add('visible');
-          }
-          return;
-        }
-        if (profileError.code !== '23505') {
-          console.error('Profile creation error:', profileError);
-        }
-      }
-    }
-
     if (successEl) {
       successEl.textContent = 'Регистрация успешна! Проверьте email для подтверждения.';
       successEl.classList.add('visible');
