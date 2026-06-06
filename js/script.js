@@ -247,6 +247,30 @@ async function updateProfileUI() {
   }
 }
 
+function buyTariff(name, price) {
+  if (!currentUser) {
+    openModal('login');
+    return;
+  }
+
+  document.getElementById('modalOverlay').classList.add('active');
+  const content = document.getElementById('modalContent');
+  content.innerHTML = `
+    <h2>Оформление заказа</h2>
+    <p>Тариф: <strong>${name}</strong> — ${price.toLocaleString('ru-RU')} ₽</p>
+    <div class="form-success visible" style="color: var(--accent-light); text-align: center; padding: 16px; background: rgba(155,89,182,0.1); border-radius: 10px; border: 1px solid var(--card-border);">
+      <p style="font-size: 16px; margin-bottom: 8px;">Для оплаты напишите в Telegram:</p>
+      <a href="https://t.me/astranordlc" target="_blank" style="color: var(--accent-light); font-size: 18px; font-weight: 700; text-decoration: none;">
+        <i class="fa-brands fa-telegram"></i> @astranordlc
+      </a>
+      <p style="margin-top: 12px; font-size: 13px; opacity: 0.7;">Укажите ваш email: ${currentUser.email}</p>
+    </div>
+    <div class="modal-footer">
+      <a onclick="closeModal()">Закрыть</a>
+    </div>
+  `;
+}
+
 async function copyHWID() {
   const hwid = document.getElementById('hwidValue').textContent;
   if (hwid && hwid !== 'Не привязан') {
