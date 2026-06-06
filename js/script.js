@@ -3,7 +3,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_5Z7cq0CgHgRsUJOkinbpBQ_LIejxJnl';
 
 let supabase = null;
 let currentUser = null;
-let currentPage = 'home';
 
 function initSupabase() {
   if (window.supabase && !supabase) {
@@ -19,71 +18,13 @@ function initSupabase() {
   return false;
 }
 
-function navigate(page) {
-  currentPage = page;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll('.header-nav a').forEach(a => a.classList.remove('active'));
-  const navLink = document.querySelector(`.header-nav a[onclick*="'${page}'"]`);
-  if (navLink) navLink.classList.add('active');
-  window.scrollTo(0, 0);
-  updateProfileUI();
-}
-
 function toggleMobileMenu() {
   document.getElementById('mobileMenu').classList.toggle('open');
 }
 
 function closeMobileMenu() {
-  document.getElementById('mobileMenu').classList.remove('open');
-}
-
-function openModal(type) {
-  document.getElementById('modalOverlay').classList.add('active');
-  const content = document.getElementById('modalContent');
-
-  if (type === 'login') {
-    content.innerHTML = `
-      <h2>Вход</h2>
-      <p>Войдите в свой аккаунт</p>
-      <div class="form-error" id="loginError"></div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="loginEmail" placeholder="your@email.com" />
-      </div>
-      <div class="form-group">
-        <label>Пароль</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" />
-      </div>
-      <button class="btn-fill" onclick="handleLogin()">Войти</button>
-      <div class="modal-footer">
-        Нет аккаунта? <a onclick="openModal('register')">Зарегистрироваться</a>
-      </div>
-    `;
-  } else if (type === 'register') {
-    content.innerHTML = `
-      <h2>Регистрация</h2>
-      <p>Создайте новый аккаунт</p>
-      <div class="form-error" id="registerError"></div>
-      <div class="form-success" id="registerSuccess"></div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="registerEmail" placeholder="your@email.com" />
-      </div>
-      <div class="form-group">
-        <label>Пароль</label>
-        <input type="password" id="registerPassword" placeholder="••••••••" />
-      </div>
-      <button class="btn-fill" onclick="handleRegister()">Зарегистрироваться</button>
-      <div class="modal-footer">
-        Уже есть аккаунт? <a onclick="openModal('login')">Войти</a>
-      </div>
-    `;
-  }
-}
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('active');
+  const menu = document.getElementById('mobileMenu');
+  if (menu) menu.classList.remove('open');
 }
 
 async function handleRegister() {
@@ -92,24 +33,21 @@ async function handleRegister() {
   const errorEl = document.getElementById('registerError');
   const successEl = document.getElementById('registerSuccess');
 
-  errorEl.classList.remove('visible');
-  successEl.classList.remove('visible');
+  if (errorEl) errorEl.classList.remove('visible');
+  if (successEl) successEl.classList.remove('visible');
 
   if (!email || !password) {
-    errorEl.textContent = 'Заполните все поля';
-    errorEl.classList.add('visible');
+    if (errorEl) { errorEl.textContent = 'Заполните все поля'; errorEl.classList.add('visible'); }
     return;
   }
 
   if (password.length < 6) {
-    errorEl.textContent = 'Пароль должен быть минимум 6 символов';
-    errorEl.classList.add('visible');
+    if (errorEl) { errorEl.textContent = 'Пароль должен быть минимум 6 символов'; errorEl.classList.add('visible'); }
     return;
   }
 
   if (!initSupabase()) {
-    errorEl.textContent = 'Библиотека Supabase не загрузилась. Обнови страницу.';
-    errorEl.classList.add('visible');
+    if (errorEl) { errorEl.textContent = 'Библиотека Supabase не загрузилась. Обнови страницу.'; errorEl.classList.add('visible'); }
     return;
   }
 
@@ -120,8 +58,7 @@ async function handleRegister() {
     });
 
     if (error) {
-      errorEl.textContent = error.message;
-      errorEl.classList.add('visible');
+      if (errorEl) { errorEl.textContent = error.message; errorEl.classList.add('visible'); }
       return;
     }
 
@@ -132,15 +69,17 @@ async function handleRegister() {
           email: email,
           tariff: 'Нет',
           hwid: '',
+          promo_codes: [],
           created_at: new Date().toISOString()
         }
       ]);
 
       if (profileError) {
         if (profileError.code === '42P01') {
-          successEl.textContent = 'Регистрация успешна! Внимание: не создана таблица profiles в Supabase. Выполни supabase_setup.sql в SQL Editor.';
-          successEl.classList.add('visible');
-          setTimeout(() => closeModal(), 4000);
+          if (successEl) {
+            successEl.textContent = 'Регистрация успешна! Внимание: не создана таблица profiles в Supabase. Выполни supabase_setup.sql в SQL Editor.';
+            successEl.classList.add('visible');
+          }
           return;
         }
         if (profileError.code !== '23505') {
@@ -149,13 +88,12 @@ async function handleRegister() {
       }
     }
 
-    successEl.textContent = 'Регистрация успешна! Проверьте email для подтверждения.';
-    successEl.classList.add('visible');
-
-    setTimeout(() => closeModal(), 2000);
+    if (successEl) {
+      successEl.textContent = 'Регистрация успешна! Проверьте email для подтверждения.';
+      successEl.classList.add('visible');
+    }
   } catch (err) {
-    errorEl.textContent = 'Ошибка соединения с сервером';
-    errorEl.classList.add('visible');
+    if (errorEl) { errorEl.textContent = 'Ошибка соединения с сервером'; errorEl.classList.add('visible'); }
   }
 }
 
@@ -164,17 +102,15 @@ async function handleLogin() {
   const password = document.getElementById('loginPassword').value;
   const errorEl = document.getElementById('loginError');
 
-  errorEl.classList.remove('visible');
+  if (errorEl) errorEl.classList.remove('visible');
 
   if (!email || !password) {
-    errorEl.textContent = 'Заполните все поля';
-    errorEl.classList.add('visible');
+    if (errorEl) { errorEl.textContent = 'Заполните все поля'; errorEl.classList.add('visible'); }
     return;
   }
 
   if (!initSupabase()) {
-    errorEl.textContent = 'Библиотека Supabase не загрузилась. Обнови страницу.';
-    errorEl.classList.add('visible');
+    if (errorEl) { errorEl.textContent = 'Библиотека Supabase не загрузилась. Обнови страницу.'; errorEl.classList.add('visible'); }
     return;
   }
 
@@ -185,19 +121,15 @@ async function handleLogin() {
     });
 
     if (error) {
-      errorEl.textContent = error.message;
-      errorEl.classList.add('visible');
+      if (errorEl) { errorEl.textContent = error.message; errorEl.classList.add('visible'); }
       return;
     }
 
     currentUser = data.user;
-    closeModal();
     updateAuthUI();
-    updateProfileUI();
-    if (currentPage === 'profile') updateProfileUI();
+    window.location.href = 'profile.html';
   } catch (err) {
-    errorEl.textContent = 'Ошибка соединения с сервером';
-    errorEl.classList.add('visible');
+    if (errorEl) { errorEl.textContent = 'Ошибка соединения с сервером'; errorEl.classList.add('visible'); }
   }
 }
 
@@ -207,37 +139,42 @@ async function handleLogout() {
   }
   currentUser = null;
   updateAuthUI();
-  updateProfileUI();
-  navigate('home');
+  window.location.href = 'index.html';
 }
 
 async function updateAuthUI() {
   const authContainer = document.getElementById('authButtons');
+  if (!authContainer) return;
 
   if (currentUser) {
     authContainer.innerHTML = `
-      <span class="user-email">${currentUser.email}</span>
+      <a href="profile.html" class="user-email">${currentUser.email}</a>
       <button class="btn-outline" onclick="handleLogout()">Выйти</button>
     `;
   } else {
     authContainer.innerHTML = `
-      <button class="btn-outline" onclick="openModal('login')">Войти</button>
-      <button class="btn-fill" onclick="openModal('register')">Регистрация</button>
+      <a href="login.html" class="btn-outline">Войти</a>
+      <a href="register.html" class="btn-fill">Регистрация</a>
     `;
   }
 }
 
 async function updateProfileUI() {
   if (!currentUser) {
-    document.getElementById('profileNotAuth').style.display = 'block';
-    document.getElementById('profileContent').style.display = 'none';
+    const notAuth = document.getElementById('profileNotAuth');
+    const content = document.getElementById('profileContent');
+    if (notAuth) notAuth.style.display = 'block';
+    if (content) content.style.display = 'none';
     return;
   }
 
-  document.getElementById('profileNotAuth').style.display = 'none';
-  document.getElementById('profileContent').style.display = 'block';
+  const notAuth = document.getElementById('profileNotAuth');
+  const content = document.getElementById('profileContent');
+  if (notAuth) notAuth.style.display = 'none';
+  if (content) content.style.display = 'block';
 
-  document.getElementById('profileEmail').textContent = currentUser.email;
+  const emailEl = document.getElementById('profileEmail');
+  if (emailEl) emailEl.textContent = currentUser.email;
 
   if (!supabase) return;
 
@@ -259,29 +196,115 @@ async function updateProfileUI() {
     }
 
     if (data) {
-      document.getElementById('profileTariff').textContent = data.tariff || 'Нет';
-      document.getElementById('profileDate').textContent = data.created_at
-        ? new Date(data.created_at).toLocaleDateString('ru-RU')
-        : '-';
-      document.getElementById('hwidValue').textContent = data.hwid || 'Не привязан';
+      const tariffEl = document.getElementById('profileTariff');
+      const dateEl = document.getElementById('profileDate');
+      const hwidEl = document.getElementById('hwidValue');
+      if (tariffEl) tariffEl.textContent = data.tariff || 'Нет';
+      if (dateEl) dateEl.textContent = data.created_at ? new Date(data.created_at).toLocaleDateString('ru-RU') : '-';
+      if (hwidEl) hwidEl.textContent = data.hwid || 'Не привязан';
     }
   } catch (err) {
     console.error('Error fetching profile:', err);
   }
 }
 
-function buyTariff(name, price) {
-  if (!currentUser) {
-    openModal('login');
+let activeDiscount = 0;
+
+async function applyPromoCode() {
+  const input = document.getElementById('promoCode');
+  const msg = document.getElementById('promoMessage');
+  if (!input || !msg) return;
+  const code = input.value.trim().toUpperCase();
+
+  msg.classList.remove('visible', 'error', 'success');
+  if (!code) {
+    msg.textContent = 'Введите промокод';
+    msg.classList.add('visible', 'error');
     return;
   }
 
-  document.getElementById('modalOverlay').classList.add('active');
+  if (!initSupabase()) {
+    msg.textContent = 'Ошибка соединения';
+    msg.classList.add('visible', 'error');
+    return;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('promocodes')
+      .select('*')
+      .eq('code', code)
+      .single();
+
+    if (error || !data) {
+      msg.textContent = 'Промокод не найден';
+      msg.classList.add('visible', 'error');
+      activeDiscount = 0;
+      updatePrices();
+      return;
+    }
+
+    if (data.expires_at && new Date(data.expires_at) < new Date()) {
+      msg.textContent = 'Промокод истёк';
+      msg.classList.add('visible', 'error');
+      activeDiscount = 0;
+      updatePrices();
+      return;
+    }
+
+    if (data.max_uses && data.used_count >= data.max_uses) {
+      msg.textContent = 'Промокод больше недействителен';
+      msg.classList.add('visible', 'error');
+      activeDiscount = 0;
+      updatePrices();
+      return;
+    }
+
+    activeDiscount = data.discount_percent;
+    msg.textContent = `Промокод применён! Скидка ${data.discount_percent}%`;
+    msg.classList.add('visible', 'success');
+    updatePrices();
+  } catch (err) {
+    msg.textContent = 'Ошибка проверки промокода';
+    msg.classList.add('visible', 'error');
+    activeDiscount = 0;
+    updatePrices();
+  }
+}
+
+function updatePrices() {
+  document.querySelectorAll('.tariff-price').forEach(el => {
+    const original = parseInt(el.getAttribute('data-price'));
+    if (!original) return;
+    if (activeDiscount > 0) {
+      const discounted = original - Math.round(original * activeDiscount / 100);
+      el.innerHTML = `${discounted.toLocaleString('ru-RU')} ₽ <span class="old-price">${original.toLocaleString('ru-RU')} ₽</span>`;
+    } else {
+      el.innerHTML = `${original.toLocaleString('ru-RU')} ₽`;
+    }
+  });
+}
+
+function buyTariff(name, price) {
+  if (!currentUser) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  const finalPrice = activeDiscount > 0 ? price - Math.round(price * activeDiscount / 100) : price;
+  const discountText = activeDiscount > 0 ? `<p style="font-size:13px;color:#22c55e;margin-bottom:8px;">Скидка ${activeDiscount}% применена</p>` : '';
+
+  const overlay = document.getElementById('modalOverlay');
   const content = document.getElementById('modalContent');
+  if (!overlay || !content) return;
+
+  overlay.classList.add('active');
   content.innerHTML = `
     <h2>Оформление заказа</h2>
-    <p>Тариф: <strong>${name}</strong> — ${price.toLocaleString('ru-RU')} ₽</p>
-    <div class="form-success visible" style="color: var(--accent-light); text-align: center; padding: 16px; background: rgba(155,89,182,0.1); border-radius: 10px; border: 1px solid var(--card-border);">
+    <p>Тариф: <strong>${name}</strong></p>
+    <p style="font-size: 24px; font-weight: 800; margin-bottom: 16px; color: var(--accent-light);">${finalPrice.toLocaleString('ru-RU')} ₽</p>
+    ${discountText}
+    <div style="color: var(--accent-light); text-align: center; padding: 16px; background: rgba(155,89,182,0.1); border-radius: 10px; border: 1px solid var(--card-border);">
       <p style="font-size: 16px; margin-bottom: 8px;">Для оплаты напишите в Telegram:</p>
       <a href="https://t.me/astranordlc" target="_blank" style="color: var(--accent-light); font-size: 18px; font-weight: 700; text-decoration: none;">
         <i class="fa-brands fa-telegram"></i> @astranordlc
@@ -294,8 +317,15 @@ function buyTariff(name, price) {
   `;
 }
 
+function closeModal() {
+  const overlay = document.getElementById('modalOverlay');
+  if (overlay) overlay.classList.remove('active');
+}
+
 async function copyHWID() {
-  const hwid = document.getElementById('hwidValue').textContent;
+  const hwidEl = document.getElementById('hwidValue');
+  if (!hwidEl) return;
+  const hwid = hwidEl.textContent;
   if (hwid && hwid !== 'Не привязан') {
     try {
       await navigator.clipboard.writeText(hwid);
@@ -334,6 +364,7 @@ async function restoreSession() {
     if (session) {
       currentUser = session.user;
       updateAuthUI();
+      updateProfileUI();
     }
   } catch (err) {
     console.error('Session restore error:', err);
@@ -363,6 +394,11 @@ style.textContent = `
     background: rgba(155, 89, 182, 0.1);
     border-radius: 8px;
     border: 1px solid var(--card-border);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .user-email:hover {
+    background: rgba(155, 89, 182, 0.2);
   }
 `;
 document.head.appendChild(style);
