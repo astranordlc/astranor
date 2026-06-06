@@ -1,21 +1,10 @@
 const SUPABASE_URL = 'https://wjtxtpnnmwmjguwgmymd.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_5Z7cq0CgHgRsUJOkinbpBQ_LIejxJnl';
 
-let supabase = null;
 let currentUser = null;
 
-function initSupabase() {
-  if (window.supabase && !supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true
-      }
-    });
-    return true;
-  }
-  return false;
+function getAccessToken() {
+  return localStorage.getItem('sb_access_token');
 }
 
 function toggleMobileMenu() {
@@ -32,6 +21,7 @@ async function handleRegister() {
   const password = document.getElementById('registerPassword').value;
   const errorEl = document.getElementById('registerError');
   const successEl = document.getElementById('registerSuccess');
+  const btn = document.querySelector('.auth-card .btn-fill');
 
   if (errorEl) errorEl.classList.remove('visible');
   if (successEl) successEl.classList.remove('visible');
@@ -46,19 +36,23 @@ async function handleRegister() {
     return;
   }
 
-  if (!initSupabase()) {
-    if (errorEl) { errorEl.textContent = 'Библиотека Supabase не загрузилась. Обнови страницу.'; errorEl.classList.add('visible'); }
-    return;
-  }
+  if (btn) btn.textContent = 'Подождите...';
 
   try {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password
+    const response = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/auth/v1/signup', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
     });
 
-    if (error) {
-      if (errorEl) { errorEl.textContent = error.message; errorEl.classList.add('visible'); }
+    const result = await response.json();
+
+    if (!response.ok) {
+      if (btn) btn.textContent = 'Зарегистрироваться';
+      if (errorEl) { errorEl.textContent = result.msg || 'Ошибка регистрации'; errorEl.classList.add('visible'); }
       return;
     }
 
@@ -66,8 +60,10 @@ async function handleRegister() {
       successEl.textContent = 'Регистрация успешна! Проверьте email для подтверждения.';
       successEl.classList.add('visible');
     }
+    if (btn) btn.textContent = 'Зарегистрироваться';
   } catch (err) {
-    if (errorEl) { errorEl.textContent = 'Ошибка соединения с сервером'; errorEl.classList.add('visible'); }
+    if (btn) btn.textContent = 'Зарегистрироваться';
+    if (errorEl) { errorEl.textContent = 'Ошибка: ' + err.message; errorEl.classList.add('visible'); }
   }
 }
 
@@ -75,6 +71,7 @@ async function handleLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   const errorEl = document.getElementById('loginError');
+  const btn = document.querySelector('.auth-card .btn-fill');
 
   if (errorEl) errorEl.classList.remove('visible');
 
@@ -83,34 +80,43 @@ async function handleLogin() {
     return;
   }
 
-  if (!initSupabase()) {
-    if (errorEl) { errorEl.textContent = 'Библиотека Supabase не загрузилась. Обнови страницу.'; errorEl.classList.add('visible'); }
-    return;
-  }
+  if (btn) btn.textContent = 'Подождите...';
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
+    const response = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
     });
 
-    if (error) {
-      if (errorEl) { errorEl.textContent = error.message; errorEl.classList.add('visible'); }
+    const result = await response.json();
+
+    if (!response.ok) {
+      if (btn) btn.textContent = 'Войти';
+      if (errorEl) { errorEl.textContent = result.msg || 'Ошибка входа'; errorEl.classList.add('visible'); }
       return;
     }
 
-    currentUser = data.user;
+    localStorage.setItem('sb_access_token', result.access_token);
+    localStorage.setItem('sb_refresh_token', result.refresh_token);
+    localStorage.setItem('sb_user', JSON.stringify(result.user));
+
+    currentUser = result.user;
     updateAuthUI();
     window.location.href = 'profile.html';
   } catch (err) {
-    if (errorEl) { errorEl.textContent = 'Ошибка соединения с сервером'; errorEl.classList.add('visible'); }
+    if (btn) btn.textContent = 'Войти';
+    if (errorEl) { errorEl.textContent = 'Ошибка: ' + err.message; errorEl.classList.add('visible'); }
   }
 }
 
 async function handleLogout() {
-  if (supabase) {
-    await supabase.auth.signOut();
-  }
+  localStorage.removeItem('sb_access_token');
+  localStorage.removeItem('sb_refresh_token');
+  localStorage.removeItem('sb_user');
   currentUser = null;
   updateAuthUI();
   window.location.href = 'index.html';
@@ -150,26 +156,26 @@ async function updateProfileUI() {
   const emailEl = document.getElementById('profileEmail');
   if (emailEl) emailEl.textContent = currentUser.email;
 
-  if (!supabase) return;
+  const token = getAccessToken();
+  if (!token) return;
 
   try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', currentUser.id)
-      .single();
-
-    if (error) {
-      if (error.code === '42P01') {
-        const el = document.querySelector('.profile-hwid p');
-        if (el) { el.textContent = 'Таблица profiles не найдена. Выполни supabase_setup.sql в SQL Editor Supabase.'; el.style.color = '#ef4444'; }
-        return;
+    const response = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/profiles?id=eq.' + currentUser.id + '&select=*', {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + token
       }
-      console.error('Profile fetch error:', error);
+    });
+
+    if (response.status === 404) {
+      const el = document.querySelector('.profile-hwid p');
+      if (el) { el.textContent = 'Таблица profiles не найдена. Выполни supabase_setup.sql в SQL Editor Supabase.'; el.style.color = '#ef4444'; }
       return;
     }
 
-    if (data) {
+    const profiles = await response.json();
+    if (profiles && profiles.length > 0) {
+      const data = profiles[0];
       const tariffEl = document.getElementById('profileTariff');
       const dateEl = document.getElementById('profileDate');
       const hwidEl = document.getElementById('hwidValue');
@@ -197,20 +203,16 @@ async function applyPromoCode() {
     return;
   }
 
-  if (!initSupabase()) {
-    msg.textContent = 'Ошибка соединения';
-    msg.classList.add('visible', 'error');
-    return;
-  }
-
   try {
-    const { data, error } = await supabase
-      .from('promocodes')
-      .select('*')
-      .eq('code', code)
-      .single();
+    const response = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/promocodes?code=eq.' + encodeURIComponent(code) + '&select=*', {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY
+      }
+    });
 
-    if (error || !data) {
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
       msg.textContent = 'Промокод не найден';
       msg.classList.add('visible', 'error');
       activeDiscount = 0;
@@ -218,7 +220,9 @@ async function applyPromoCode() {
       return;
     }
 
-    if (data.expires_at && new Date(data.expires_at) < new Date()) {
+    const promo = data[0];
+
+    if (promo.expires_at && new Date(promo.expires_at) < new Date()) {
       msg.textContent = 'Промокод истёк';
       msg.classList.add('visible', 'error');
       activeDiscount = 0;
@@ -226,7 +230,7 @@ async function applyPromoCode() {
       return;
     }
 
-    if (data.max_uses && data.used_count >= data.max_uses) {
+    if (promo.max_uses && promo.used_count >= promo.max_uses) {
       msg.textContent = 'Промокод больше недействителен';
       msg.classList.add('visible', 'error');
       activeDiscount = 0;
@@ -234,8 +238,8 @@ async function applyPromoCode() {
       return;
     }
 
-    activeDiscount = data.discount_percent;
-    msg.textContent = `Промокод применён! Скидка ${data.discount_percent}%`;
+    activeDiscount = promo.discount_percent;
+    msg.textContent = 'Промокод применён! Скидка ' + promo.discount_percent + '%';
     msg.classList.add('visible', 'success');
     updatePrices();
   } catch (err) {
@@ -314,49 +318,23 @@ async function copyHWID() {
   }
 }
 
-function setupAuthListener() {
-  if (!supabase) return;
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-      currentUser = session.user;
+function restoreSession() {
+  const stored = localStorage.getItem('sb_user');
+  const token = localStorage.getItem('sb_access_token');
+  if (stored && token) {
+    try {
+      currentUser = JSON.parse(stored);
       updateAuthUI();
       updateProfileUI();
-    } else if (event === 'SIGNED_OUT') {
-      currentUser = null;
-      updateAuthUI();
-      updateProfileUI();
-    } else if (event === 'TOKEN_REFRESHED') {
-      currentUser = session?.user || null;
+    } catch (e) {
+      localStorage.removeItem('sb_user');
+      localStorage.removeItem('sb_access_token');
+      localStorage.removeItem('sb_refresh_token');
     }
-  });
-}
-
-async function restoreSession() {
-  if (!initSupabase()) return;
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      currentUser = session.user;
-      updateAuthUI();
-      updateProfileUI();
-    }
-  } catch (err) {
-    console.error('Session restore error:', err);
   }
 }
 
-function waitForSupabase(retries) {
-  if (initSupabase()) {
-    setupAuthListener();
-    restoreSession();
-    return;
-  }
-  if (retries > 0) {
-    setTimeout(function(){ waitForSupabase(retries - 1); }, 500);
-  }
-}
-
-waitForSupabase(20);
+restoreSession();
 
 const style = document.createElement('style');
 style.textContent = `
