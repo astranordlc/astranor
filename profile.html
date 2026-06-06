@@ -75,6 +75,16 @@
               <span class="profile-value" id="profileEmail">-</span>
             </div>
             <div class="profile-row">
+              <span class="profile-label"><i class="fa-solid fa-at"></i> Ник</span>
+              <span class="profile-value" id="profileUsername">-</span>
+            </div>
+            <div class="profile-row" style="flex-wrap:wrap;gap:8px;">
+              <input type="text" id="usernameInput" placeholder="Введите ник" style="flex:1;min-width:120px;padding:8px 12px;background:rgba(0,0,0,0.3);border:1px solid var(--card-border);border-radius:8px;color:var(--text-color);font-size:13px;outline:none;"/>
+              <button class="btn-fill" onclick="handleUpdateUsername()" style="padding:8px 16px;font-size:12px;">Сменить</button>
+              <div class="form-error" id="usernameError" style="width:100%;"></div>
+              <div class="form-success" id="usernameSuccess" style="width:100%;"></div>
+            </div>
+            <div class="profile-row">
               <span class="profile-label"><i class="fa-solid fa-id-card"></i> UID</span>
               <span class="profile-value" id="profileUid">-</span>
             </div>

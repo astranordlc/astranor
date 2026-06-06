@@ -187,6 +187,7 @@ async function handleLogout() {
   localStorage.removeItem('sb_access_token');
   localStorage.removeItem('sb_refresh_token');
   localStorage.removeItem('sb_user');
+  localStorage.removeItem('sb_profile');
   currentUser = null;
   updateAuthUI();
   window.location.href = 'index.html';
@@ -197,10 +198,18 @@ async function updateAuthUI() {
   if (!authContainer) return;
 
   if (currentUser) {
+    const storedProfiles = localStorage.getItem('sb_profile');
+    let displayName = currentUser.email;
+    if (storedProfiles) {
+      try {
+        const p = JSON.parse(storedProfiles);
+        if (p.username) displayName = p.username;
+      } catch (e) {}
+    }
     authContainer.innerHTML = `
       <a href="profile.html" class="user-email">
         <img id="headerAvatarImg" src="" style="display:none;width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px"/>
-        ${currentUser.email}
+        ${displayName}
       </a>
       <button class="btn-outline" onclick="handleLogout()">Выйти</button>
     `;
@@ -257,10 +266,15 @@ async function updateProfileUI() {
       const loaderSection = document.getElementById('loaderSection');
       const headerAvatar = document.getElementById('headerAvatarImg');
 
+      const usernameEl = document.getElementById('profileUsername');
+      const usernameInput = document.getElementById('usernameInput');
+
       if (tariffEl) tariffEl.textContent = data.tariff || 'Нет';
       if (dateEl) dateEl.textContent = data.created_at ? new Date(data.created_at).toLocaleDateString('ru-RU') : '-';
       if (hwidEl) hwidEl.textContent = data.hwid || 'Не привязан';
       if (uidEl) uidEl.textContent = data.uid || '0';
+      if (usernameEl) usernameEl.textContent = data.username || currentUser.email.split('@')[0];
+      if (usernameInput) usernameInput.value = data.username || '';
 
       const avatarPlaceholder = document.getElementById('avatarPlaceholder');
 
@@ -276,6 +290,9 @@ async function updateProfileUI() {
         headerAvatar.src = data.avatar_url;
         headerAvatar.style.display = 'inline-block';
       }
+
+      localStorage.setItem('sb_profile', JSON.stringify({ username: data.username, avatar_url: data.avatar_url }));
+      updateAuthUI();
 
       if (loaderSection) {
         const hasTariff = data.tariff && data.tariff !== 'Нет' && data.tariff.trim() !== '';
@@ -363,6 +380,77 @@ async function handleAvatarUpload() {
       successEl.classList.add('visible');
     }
     updateProfileUI();
+  } catch (err) {
+    if (errorEl) { errorEl.textContent = 'Ошибка: ' + err.message; errorEl.classList.add('visible'); }
+  }
+}
+
+async function handleUpdateUsername() {
+  const input = document.getElementById('usernameInput');
+  const errorEl = document.getElementById('usernameError');
+  const successEl = document.getElementById('usernameSuccess');
+  const displayEl = document.getElementById('profileUsername');
+
+  if (errorEl) errorEl.classList.remove('visible');
+  if (successEl) successEl.classList.remove('visible');
+
+  if (!input || !input.value.trim()) {
+    if (errorEl) { errorEl.textContent = 'Введите ник'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  const username = input.value.trim();
+  if (username.length < 2 || username.length > 16) {
+    if (errorEl) { errorEl.textContent = 'Ник от 2 до 16 символов'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    if (errorEl) { errorEl.textContent = 'Только латиница, цифры и _'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  const token = getAccessToken();
+  if (!token) {
+    if (errorEl) { errorEl.textContent = 'Авторизуйтесь заново'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  try {
+    const check = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/profiles?username=eq.' + encodeURIComponent(username) + '&select=id', {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY
+      }
+    });
+    const existing = await check.json();
+    if (existing && existing.length > 0 && existing[0].id !== currentUser.id) {
+      if (errorEl) { errorEl.textContent = 'Этот ник уже занят'; errorEl.classList.add('visible'); }
+      return;
+    }
+
+    const response = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/profiles?id=eq.' + currentUser.id, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ username })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      if (errorEl) { errorEl.textContent = errData.message || 'Ошибка сохранения'; errorEl.classList.add('visible'); }
+      return;
+    }
+
+    if (displayEl) displayEl.textContent = username;
+    if (successEl) {
+      successEl.textContent = 'Ник сохранён!';
+      successEl.classList.add('visible');
+    }
+    updateAuthUI();
   } catch (err) {
     if (errorEl) { errorEl.textContent = 'Ошибка: ' + err.message; errorEl.classList.add('visible'); }
   }
