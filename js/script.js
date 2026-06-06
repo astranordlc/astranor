@@ -56,6 +56,14 @@ async function handleRegister() {
       return;
     }
 
+    const userId = result.id || (result.user && result.user.id);
+    const email = result.email || (result.user && result.user.email);
+
+    if (userId) {
+      window.location.href = 'confirm.html?user_id=' + encodeURIComponent(userId) + '&email=' + encodeURIComponent(email || '');
+      return;
+    }
+
     if (successEl) {
       successEl.textContent = 'Регистрация успешна! Проверьте email для подтверждения.';
       successEl.classList.add('visible');
@@ -63,6 +71,68 @@ async function handleRegister() {
     if (btn) btn.textContent = 'Зарегистрироваться';
   } catch (err) {
     if (btn) btn.textContent = 'Зарегистрироваться';
+    if (errorEl) { errorEl.textContent = 'Ошибка: ' + err.message; errorEl.classList.add('visible'); }
+  }
+}
+
+function getConfirmParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    user_id: params.get('user_id'),
+    email: params.get('email')
+  };
+}
+
+async function handleConfirmEmail() {
+  const { user_id, email } = getConfirmParams();
+  const errorEl = document.getElementById('confirmError');
+  const successEl = document.getElementById('confirmSuccess');
+  const btn = document.getElementById('confirmBtn');
+  const displayEl = document.getElementById('confirmEmailDisplay');
+
+  if (displayEl && email) {
+    displayEl.textContent = 'Email: ' + email;
+  }
+
+  if (errorEl) errorEl.classList.remove('visible');
+  if (successEl) successEl.classList.remove('visible');
+
+  if (!user_id) {
+    if (errorEl) { errorEl.textContent = 'Ошибка: ID пользователя не найден. Зарегистрируйтесь заново.'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  if (btn) { btn.textContent = 'Подождите...'; btn.disabled = true; }
+
+  try {
+    const response = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/rpc/confirm_user_email', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ user_id })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.error) {
+      if (btn) { btn.textContent = 'Подтвердить почту'; btn.disabled = false; }
+      if (errorEl) { errorEl.textContent = result.error || 'Ошибка подтверждения'; errorEl.classList.add('visible'); }
+      return;
+    }
+
+    if (successEl) {
+      successEl.textContent = 'Email успешно подтверждён!';
+      successEl.classList.add('visible');
+    }
+    if (btn) { btn.textContent = 'Подтвердить почту'; btn.disabled = false; }
+
+    setTimeout(() => {
+      window.location.href = 'login.html';
+    }, 2000);
+  } catch (err) {
+    if (btn) { btn.textContent = 'Подтвердить почту'; btn.disabled = false; }
     if (errorEl) { errorEl.textContent = 'Ошибка: ' + err.message; errorEl.classList.add('visible'); }
   }
 }
@@ -335,6 +405,14 @@ function restoreSession() {
 }
 
 restoreSession();
+
+const confirmDisplay = document.getElementById('confirmEmailDisplay');
+if (confirmDisplay) {
+  const { email } = getConfirmParams();
+  if (email) {
+    confirmDisplay.textContent = 'Email: ' + email;
+  }
+}
 
 const style = document.createElement('style');
 style.textContent = `

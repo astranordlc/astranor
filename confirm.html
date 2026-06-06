@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Подтверждение email — Astranor DLC</title>
+<meta name="description" content="Astranor DLC - Ваш лучший выбор для Minecraft"/>
+<link rel="icon" type="image/png" href="Assets/logo.png"/>
+<link rel="shortcut icon" href="Assets/logo.png" type="image/png"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<div id="app">
+  <header class="header">
+    <a class="logo" href="index.html">
+      <img src="Assets/logo.png" alt="Astranor DLC" class="logo-img"/>
+      <span class="logo-text">Astranor DLC</span>
+    </a>
+    <nav class="header-nav">
+      <a href="index.html">Главная</a>
+      <a href="tariffs.html">Тарифы</a>
+      <a href="profile.html">Личный профиль</a>
+    </nav>
+    <div class="header-right">
+      <div class="header-auth-actions" id="authButtons"></div>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="auth-page">
+      <div class="auth-card" style="text-align:center;">
+        <h1>Подтверждение email</h1>
+        <p id="confirmEmailDisplay"></p>
+        <div class="form-error" id="confirmError"></div>
+        <div class="form-success" id="confirmSuccess"></div>
+        <button class="btn-fill" id="confirmBtn" onclick="handleConfirmEmail()">Подтвердить почту</button>
+        <div class="auth-footer">
+          <a href="login.html">Перейти ко входу</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-column">
+        <div class="footer-column-title"><i class="fa-solid fa-house"></i> Страницы</div>
+        <nav>
+          <a href="index.html">Главная</a>
+          <a href="tariffs.html">Тарифы</a>
+          <a href="profile.html">Личный профиль</a>
+        </nav>
+      </div>
+      <div class="footer-column">
+        <div class="footer-column-title"><i class="fa-brands fa-telegram"></i> Связь</div>
+        <nav>
+          <a href="https://t.me/astranordlc" target="_blank" rel="noreferrer">
+            <i class="fa-brands fa-telegram"></i> Telegram
+          </a>
+          <a href="https://discord.gg/DVDjwbnAU9" target="_blank" rel="noreferrer">
+            <i class="fa-brands fa-discord"></i> Discord
+          </a>
+        </nav>
+      </div>
+      <div class="footer-column">
+        <div class="footer-column-title"><i class="fa-solid fa-user"></i> Аккаунт</div>
+        <nav>
+          <a href="login.html">Войти</a>
+          <a href="register.html">Регистрация</a>
+        </nav>
+      </div>
+    </div>
+    <div class="footer-line"></div>
+    <div class="footer-bottom">
+      <span class="footer-logo-text">Astranor DLC</span>
+      <div>&copy; Astranor DLC, 2026. All Rights Reserved</div>
+    </div>
+  </footer>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <nav>
+    <a href="index.html" onclick="closeMobileMenu()">Главная</a>
+    <a href="tariffs.html" onclick="closeMobileMenu()">Тарифы</a>
+    <a href="profile.html" onclick="closeMobileMenu()">Личный профиль</a>
+  </nav>
+  <div class="mobile-menu-auth">
+    <a href="login.html" class="btn-outline" onclick="closeMobileMenu()">Войти</a>
+    <a href="register.html" class="btn-fill" onclick="closeMobileMenu()">Регистрация</a>
+  </div>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
