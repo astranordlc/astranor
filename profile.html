@@ -23,6 +23,7 @@
       <a href="index.html">Главная</a>
       <a href="tariffs.html">Тарифы</a>
       <a href="profile.html" class="active">Личный профиль</a>
+      <a href="support.html">Поддержка</a>
     </nav>
     <div class="header-right">
       <div class="header-auth-actions" id="authButtons"></div>
@@ -54,17 +55,35 @@
             <i class="fa-solid fa-user"></i>
             <h3>Информация</h3>
           </div>
+          <div class="avatar-section">
+            <img id="profileAvatar" src="" style="display:none"/>
+            <div class="avatar-placeholder" id="avatarPlaceholder">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <div>
+              <div class="avatar-upload">
+                <input type="file" id="avatarInput" accept="image/png,image/jpeg,image/gif,image/webp"/>
+                <button class="btn-fill" onclick="handleAvatarUpload()" style="padding:6px 16px;font-size:12px;">Загрузить</button>
+              </div>
+              <div class="form-error" id="avatarError" style="margin-top:8px;"></div>
+              <div class="form-success" id="avatarSuccess" style="margin-top:8px;"></div>
+            </div>
+          </div>
           <div class="profile-info">
             <div class="profile-row">
-              <span class="profile-label">Email</span>
+              <span class="profile-label"><i class="fa-solid fa-envelope"></i> Email</span>
               <span class="profile-value" id="profileEmail">-</span>
             </div>
             <div class="profile-row">
-              <span class="profile-label">Тариф</span>
+              <span class="profile-label"><i class="fa-solid fa-id-card"></i> UID</span>
+              <span class="profile-value" id="profileUid">-</span>
+            </div>
+            <div class="profile-row">
+              <span class="profile-label"><i class="fa-solid fa-tag"></i> Тариф</span>
               <span class="profile-value" id="profileTariff">-</span>
             </div>
             <div class="profile-row">
-              <span class="profile-label">Дата регистрации</span>
+              <span class="profile-label"><i class="fa-solid fa-calendar"></i> Дата регистрации</span>
               <span class="profile-value" id="profileDate">-</span>
             </div>
           </div>
@@ -86,6 +105,19 @@
           </div>
         </div>
       </div>
+
+      <div class="loader-section" id="loaderSection" style="display:none">
+        <h3><i class="fa-solid fa-download"></i> Скачать лоадер</h3>
+        <p>Нажмите кнопку ниже, чтобы скачать последнюю версию лоадера</p>
+        <a href="downloads/loader.zip" class="btn-fill" download style="display:inline-flex;">
+          <i class="fa-solid fa-download"></i> Скачать
+        </a>
+      </div>
+
+      <div class="profile-actions">
+        <a href="support.html" class="btn-outline"><i class="fa-solid fa-headset"></i> Поддержка</a>
+        <a href="tariffs.html" class="btn-outline"><i class="fa-solid fa-tag"></i> Тарифы</a>
+      </div>
     </div>
   </main>
 
@@ -97,6 +129,7 @@
           <a href="index.html">Главная</a>
           <a href="tariffs.html">Тарифы</a>
           <a href="profile.html">Личный профиль</a>
+          <a href="support.html">Поддержка</a>
         </nav>
       </div>
       <div class="footer-column">
@@ -131,6 +164,7 @@
     <a href="index.html" onclick="closeMobileMenu()">Главная</a>
     <a href="tariffs.html" onclick="closeMobileMenu()">Тарифы</a>
     <a href="profile.html" onclick="closeMobileMenu()">Личный профиль</a>
+    <a href="support.html" onclick="closeMobileMenu()">Поддержка</a>
   </nav>
   <div class="mobile-menu-auth">
     <a href="login.html" class="btn-outline" onclick="closeMobileMenu()">Войти</a>

@@ -198,7 +198,10 @@ async function updateAuthUI() {
 
   if (currentUser) {
     authContainer.innerHTML = `
-      <a href="profile.html" class="user-email">${currentUser.email}</a>
+      <a href="profile.html" class="user-email">
+        <img id="headerAvatarImg" src="" style="display:none;width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px"/>
+        ${currentUser.email}
+      </a>
       <button class="btn-outline" onclick="handleLogout()">Выйти</button>
     `;
   } else {
@@ -249,12 +252,183 @@ async function updateProfileUI() {
       const tariffEl = document.getElementById('profileTariff');
       const dateEl = document.getElementById('profileDate');
       const hwidEl = document.getElementById('hwidValue');
+      const uidEl = document.getElementById('profileUid');
+      const avatarImg = document.getElementById('profileAvatar');
+      const loaderSection = document.getElementById('loaderSection');
+      const headerAvatar = document.getElementById('headerAvatarImg');
+
       if (tariffEl) tariffEl.textContent = data.tariff || 'Нет';
       if (dateEl) dateEl.textContent = data.created_at ? new Date(data.created_at).toLocaleDateString('ru-RU') : '-';
       if (hwidEl) hwidEl.textContent = data.hwid || 'Не привязан';
+      if (uidEl) uidEl.textContent = data.uid || 'AST-XXXXXXXX';
+
+      const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+
+      if (data.avatar_url) {
+        if (avatarImg) { avatarImg.src = data.avatar_url; avatarImg.style.display = 'block'; }
+        if (avatarPlaceholder) avatarPlaceholder.style.display = 'none';
+      } else {
+        if (avatarImg) avatarImg.style.display = 'none';
+        if (avatarPlaceholder) avatarPlaceholder.style.display = 'flex';
+      }
+
+      if (headerAvatar && data.avatar_url) {
+        headerAvatar.src = data.avatar_url;
+        headerAvatar.style.display = 'inline-block';
+      }
+
+      if (loaderSection) {
+        const hasTariff = data.tariff && data.tariff !== 'Нет' && data.tariff.trim() !== '';
+        loaderSection.style.display = hasTariff ? 'block' : 'none';
+      }
     }
   } catch (err) {
     console.error('Error fetching profile:', err);
+  }
+}
+
+async function handleAvatarUpload() {
+  const fileInput = document.getElementById('avatarInput');
+  const errorEl = document.getElementById('avatarError');
+  const successEl = document.getElementById('avatarSuccess');
+
+  if (errorEl) errorEl.classList.remove('visible');
+  if (successEl) successEl.classList.remove('visible');
+
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    if (errorEl) { errorEl.textContent = 'Выберите файл'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const maxSize = 2 * 1024 * 1024;
+
+  if (file.size > maxSize) {
+    if (errorEl) { errorEl.textContent = 'Файл слишком большой (макс. 2MB)'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  const allowed = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+  if (!allowed.includes(file.type)) {
+    if (errorEl) { errorEl.textContent = 'Допустимы только PNG, JPG, GIF, WebP'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  const token = getAccessToken();
+  if (!token) {
+    if (errorEl) { errorEl.textContent = 'Авторизуйтесь заново'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  const ext = file.name.split('.').pop() || 'png';
+  const filePath = currentUser.id + '/avatar.' + ext;
+
+  try {
+    const uploadResponse = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/storage/v1/object/avatars/' + filePath, {
+      method: 'PUT',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': file.type
+      },
+      body: file
+    });
+
+    if (!uploadResponse.ok) {
+      const errData = await uploadResponse.json();
+      if (errorEl) { errorEl.textContent = errData.error || 'Ошибка загрузки'; errorEl.classList.add('visible'); }
+      return;
+    }
+
+    const avatarUrl = 'https://wjtxtpnnmwmjguwgmymd.supabase.co/storage/v1/object/public/avatars/' + filePath;
+
+    const updateResponse = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/profiles?id=eq.' + currentUser.id, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ avatar_url: avatarUrl })
+    });
+
+    if (!updateResponse.ok) {
+      if (errorEl) { errorEl.textContent = 'Аватар загружен, но не сохранён'; errorEl.classList.add('visible'); }
+      return;
+    }
+
+    if (successEl) {
+      successEl.textContent = 'Аватар обновлён!';
+      successEl.classList.add('visible');
+    }
+    updateProfileUI();
+  } catch (err) {
+    if (errorEl) { errorEl.textContent = 'Ошибка: ' + err.message; errorEl.classList.add('visible'); }
+  }
+}
+
+async function handleSupportTicket() {
+  const subject = document.getElementById('ticketSubject');
+  const message = document.getElementById('ticketMessage');
+  const errorEl = document.getElementById('ticketError');
+  const successEl = document.getElementById('ticketSuccess');
+  const btn = document.getElementById('ticketBtn');
+
+  if (errorEl) errorEl.classList.remove('visible');
+  if (successEl) successEl.classList.remove('visible');
+
+  if (!subject || !message || !subject.value.trim() || !message.value.trim()) {
+    if (errorEl) { errorEl.textContent = 'Заполните все поля'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  if (!currentUser) {
+    if (errorEl) { errorEl.textContent = 'Авторизуйтесь'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  const token = getAccessToken();
+  if (!token) {
+    if (errorEl) { errorEl.textContent = 'Авторизуйтесь заново'; errorEl.classList.add('visible'); }
+    return;
+  }
+
+  if (btn) btn.textContent = 'Подождите...';
+
+  try {
+    const response = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/support_tickets', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        user_id: currentUser.id,
+        subject: subject.value.trim(),
+        message: message.value.trim()
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      if (btn) btn.textContent = 'Отправить';
+      if (errorEl) { errorEl.textContent = errData.message || 'Ошибка отправки'; errorEl.classList.add('visible'); }
+      return;
+    }
+
+    if (successEl) {
+      successEl.textContent = 'Тикет отправлен! Мы ответим вам в ближайшее время.';
+      successEl.classList.add('visible');
+    }
+    if (btn) btn.textContent = 'Отправить';
+    subject.value = '';
+    message.value = '';
+  } catch (err) {
+    if (btn) btn.textContent = 'Отправить';
+    if (errorEl) { errorEl.textContent = 'Ошибка: ' + err.message; errorEl.classList.add('visible'); }
   }
 }
 
@@ -426,9 +600,129 @@ style.textContent = `
     border: 1px solid var(--card-border);
     text-decoration: none;
     transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
   .user-email:hover {
     background: rgba(155, 89, 182, 0.2);
+  }
+  .avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .avatar-section img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+  }
+  .avatar-section .avatar-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(155, 89, 182, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: var(--accent-light);
+    border: 2px solid var(--card-border);
+  }
+  .avatar-upload {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .avatar-upload input[type="file"] {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text-color);
+    font-size: 13px;
+    max-width: 180px;
+  }
+  .avatar-upload input[type="file"]::-webkit-file-upload-button {
+    background: var(--accent-color);
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    margin-right: 8px;
+  }
+  .loader-section {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 24px 32px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .loader-section h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .loader-section p {
+    color: var(--text-color-alower);
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .profile-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .profile-actions a {
+    flex: 1;
+    min-width: 160px;
+    text-align: center;
+  }
+  .support-page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+  .support-page h1 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .support-page p {
+    color: var(--text-color-alower);
+    margin-bottom: 24px;
+  }
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    color: var(--text-color);
+    font-size: 14px;
+    outline: none;
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+  }
+  .form-group textarea:focus {
+    border-color: var(--accent-color);
+  }
+  .profile-full-width {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
   }
 `;
 document.head.appendChild(style);
