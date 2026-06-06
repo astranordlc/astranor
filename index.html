@@ -13,19 +13,19 @@
 
 <div id="app">
   <header class="header">
-    <a class="logo" href="#" onclick="navigate('home')">
+    <a class="logo" href="index.html">
       <img src="Assets/logo.png" alt="Astranor DLC" class="logo-img"/>
       <span class="logo-text">Astranor DLC</span>
     </a>
     <nav class="header-nav">
-      <a href="#" class="active" onclick="navigate('home')">Главная</a>
-      <a href="#" onclick="navigate('tariffs')">Тарифы</a>
-      <a href="#" onclick="navigate('profile')">Личный профиль</a>
+      <a href="index.html" class="active">Главная</a>
+      <a href="tariffs.html">Тарифы</a>
+      <a href="profile.html">Личный профиль</a>
     </nav>
     <div class="header-right">
       <div class="header-auth-actions" id="authButtons">
-        <button class="btn-outline" onclick="openModal('login')">Войти</button>
-        <button class="btn-fill" onclick="openModal('register')">Регистрация</button>
+        <a href="login.html" class="btn-outline">Войти</a>
+        <a href="register.html" class="btn-fill">Регистрация</a>
       </div>
       <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
         <i class="fa-solid fa-bars"></i>
@@ -34,15 +34,15 @@
   </header>
 
   <main>
-    <section id="page-home" class="page active">
+    <section class="home-page">
       <div class="hero-glow"></div>
       <div class="hero-aurora-layer"></div>
       <h1>Astranor DLC<br/><span class="gradient-text">Твой идеальный чит</span></h1>
       <p class="subtext">Современные функции, топовая защита, быстрая производительность, частые обновления. Всё в нашем решении!</p>
       <div class="hero-actions">
-        <button class="btn-fill" onclick="openModal('register')">
+        <a href="register.html" class="btn-fill">
           <i class="fa-regular fa-circle-user"></i> Начать
-        </button>
+        </a>
       </div>
 
       <section class="features-section">
@@ -89,135 +89,6 @@
           </article>
         </div>
       </section>
-
-    </section>
-
-    <section id="page-tariffs" class="page">
-      <div class="page-header">
-        <h1>Наши тарифы</h1>
-        <p>Выбери подходящий план для себя</p>
-      </div>
-      <div class="tariffs-grid">
-        <div class="tariff-card">
-          <div class="tariff-header">
-            <h3>Beta Client</h3>
-            <div class="tariff-price">0 ₽</div>
-            <p class="tariff-period">тестовый доступ</p>
-          </div>
-          <ul class="tariff-features">
-            <li><i class="fa-solid fa-check"></i> Базовые функции</li>
-            <li><i class="fa-solid fa-check"></i> Ограниченный функционал</li>
-            <li><i class="fa-solid fa-check"></i> Тестовые обходы</li>
-            <li><i class="fa-solid fa-xmark"></i> Полный функционал</li>
-            <li><i class="fa-solid fa-xmark"></i> Поддержка 24/7</li>
-          </ul>
-          <button class="btn-fill" onclick="buyTariff('Beta Client', 0)">Попробовать</button>
-        </div>
-        <div class="tariff-card">
-          <div class="tariff-header">
-            <h3>14 дней</h3>
-            <div class="tariff-price">499 ₽</div>
-            <p class="tariff-period">14 дней доступа</p>
-          </div>
-          <ul class="tariff-features">
-            <li><i class="fa-solid fa-check"></i> Все функции чита</li>
-            <li><i class="fa-solid fa-check"></i> Обновления</li>
-            <li><i class="fa-solid fa-check"></i> Все обходы</li>
-            <li><i class="fa-solid fa-check"></i> Поддержка в чате</li>
-            <li><i class="fa-solid fa-xmark"></i> Приватные обходы</li>
-          </ul>
-          <button class="btn-fill" onclick="buyTariff('14 дней', 499)">Купить</button>
-        </div>
-        <div class="tariff-card tariff-popular">
-          <div class="tariff-badge">Популярный</div>
-          <div class="tariff-header">
-            <h3>30 дней</h3>
-            <div class="tariff-price">999 ₽</div>
-            <p class="tariff-period">30 дней доступа</p>
-          </div>
-          <ul class="tariff-features">
-            <li><i class="fa-solid fa-check"></i> Все функции чита</li>
-            <li><i class="fa-solid fa-check"></i> Обновления</li>
-            <li><i class="fa-solid fa-check"></i> Все обходы</li>
-            <li><i class="fa-solid fa-check"></i> Приватные обходы</li>
-            <li><i class="fa-solid fa-check"></i> Поддержка 24/7</li>
-          </ul>
-          <button class="btn-fill" onclick="buyTariff('30 дней', 999)">Купить</button>
-        </div>
-        <div class="tariff-card">
-          <div class="tariff-header">
-            <h3>Навсегда</h3>
-            <div class="tariff-price">2,499 ₽</div>
-            <p class="tariff-period">пожизненный доступ</p>
-          </div>
-          <ul class="tariff-features">
-            <li><i class="fa-solid fa-check"></i> Все функции чита</li>
-            <li><i class="fa-solid fa-check"></i> Обновления</li>
-            <li><i class="fa-solid fa-check"></i> Приватные обходы</li>
-            <li><i class="fa-solid fa-check"></i> Ранний доступ к функциям</li>
-            <li><i class="fa-solid fa-check"></i> Поддержка 24/7</li>
-            <li><i class="fa-solid fa-check"></i> Приватный Discord канал</li>
-          </ul>
-          <button class="btn-fill" onclick="buyTariff('Навсегда', 2499)">Купить</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="page-profile" class="page">
-      <div class="page-header">
-        <h1>Личный профиль</h1>
-        <p>Ваша информация и HWID</p>
-      </div>
-
-      <div id="profileNotAuth">
-        <div class="profile-placeholder">
-          <i class="fa-solid fa-circle-user"></i>
-          <h3>Войдите в аккаунт</h3>
-          <p>Чтобы увидеть информацию профиля, необходимо авторизоваться</p>
-          <button class="btn-fill" onclick="openModal('login')">Войти</button>
-        </div>
-      </div>
-
-      <div id="profileContent" style="display:none">
-        <div class="profile-grid">
-          <div class="profile-card">
-            <div class="profile-card-header">
-              <i class="fa-solid fa-user"></i>
-              <h3>Информация</h3>
-            </div>
-            <div class="profile-info">
-              <div class="profile-row">
-                <span class="profile-label">Email</span>
-                <span class="profile-value" id="profileEmail">-</span>
-              </div>
-              <div class="profile-row">
-                <span class="profile-label">Тариф</span>
-                <span class="profile-value" id="profileTariff">-</span>
-              </div>
-              <div class="profile-row">
-                <span class="profile-label">Дата регистрации</span>
-                <span class="profile-value" id="profileDate">-</span>
-              </div>
-            </div>
-          </div>
-          <div class="profile-card">
-            <div class="profile-card-header">
-              <i class="fa-solid fa-microchip"></i>
-              <h3>HWID</h3>
-            </div>
-            <div class="profile-hwid">
-              <p>Ваш аппаратный идентификатор</p>
-              <div class="hwid-display" id="hwidDisplay">
-                <code id="hwidValue">-</code>
-                <button class="btn-icon" onclick="copyHWID()" title="Копировать">
-                  <i class="fa-regular fa-copy"></i>
-                </button>
-              </div>
-              <p class="hwid-info">HWID автоматически привязывается после запуска чита через лоадер</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
   </main>
 
@@ -226,9 +97,9 @@
       <div class="footer-column">
         <div class="footer-column-title"><i class="fa-solid fa-house"></i> Страницы</div>
         <nav>
-          <a href="#" onclick="navigate('home')">Главная</a>
-          <a href="#" onclick="navigate('tariffs')">Тарифы</a>
-          <a href="#" onclick="navigate('profile')">Личный профиль</a>
+          <a href="index.html">Главная</a>
+          <a href="tariffs.html">Тарифы</a>
+          <a href="profile.html">Личный профиль</a>
         </nav>
       </div>
       <div class="footer-column">
@@ -245,8 +116,8 @@
       <div class="footer-column">
         <div class="footer-column-title"><i class="fa-solid fa-user"></i> Аккаунт</div>
         <nav>
-          <a href="#" onclick="openModal('login')">Войти</a>
-          <a href="#" onclick="openModal('register')">Регистрация</a>
+          <a href="login.html">Войти</a>
+          <a href="register.html">Регистрация</a>
         </nav>
       </div>
     </div>
@@ -258,22 +129,15 @@
   </footer>
 </div>
 
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-    <div id="modalContent"></div>
-  </div>
-</div>
-
 <div class="mobile-menu" id="mobileMenu">
   <nav>
-    <a href="#" onclick="navigate('home'); closeMobileMenu()">Главная</a>
-    <a href="#" onclick="navigate('tariffs'); closeMobileMenu()">Тарифы</a>
-    <a href="#" onclick="navigate('profile'); closeMobileMenu()">Личный профиль</a>
+    <a href="index.html" onclick="closeMobileMenu()">Главная</a>
+    <a href="tariffs.html" onclick="closeMobileMenu()">Тарифы</a>
+    <a href="profile.html" onclick="closeMobileMenu()">Личный профиль</a>
   </nav>
   <div class="mobile-menu-auth">
-    <button class="btn-outline" onclick="openModal('login'); closeMobileMenu()">Войти</button>
-    <button class="btn-fill" onclick="openModal('register'); closeMobileMenu()">Регистрация</button>
+    <a href="login.html" class="btn-outline" onclick="closeMobileMenu()">Войти</a>
+    <a href="register.html" class="btn-fill" onclick="closeMobileMenu()">Регистрация</a>
   </div>
 </div>
 
