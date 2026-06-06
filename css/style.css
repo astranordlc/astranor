@@ -125,6 +125,9 @@ body {
 }
 
 .btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: 1px solid var(--accent-color);
   color: var(--accent-light);
@@ -134,6 +137,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
 }
 
 .btn-outline:hover {
@@ -142,6 +146,9 @@ body {
 }
 
 .btn-fill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
   border: none;
   color: var(--btn-primary-text);
@@ -152,6 +159,7 @@ body {
   cursor: pointer;
   transition: all 0.3s;
   box-shadow: 0 4px 20px rgba(155, 89, 182, 0.3);
+  text-decoration: none;
 }
 
 .btn-fill:hover {
@@ -175,15 +183,8 @@ body {
 
 main {
   padding-top: 80px;
-}
-
-.page {
-  display: none;
   min-height: calc(100vh - 80px);
-}
-
-.page.active {
-  display: block;
+  width: 100%;
 }
 
 .hero-glow {
@@ -208,14 +209,24 @@ main {
   pointer-events: none;
 }
 
-#page-home {
+.home-page {
   position: relative;
   text-align: center;
   padding: 120px 32px 60px;
   overflow: hidden;
 }
 
-#page-home h1 {
+.home-hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(80vh - 80px);
+}
+
+.home-page h1 {
   font-size: 56px;
   font-weight: 800;
   line-height: 1.2;
@@ -243,6 +254,9 @@ main {
 .hero-actions {
   position: relative;
   z-index: 1;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
 }
 
 .features-section {
@@ -583,6 +597,109 @@ main {
   margin-bottom: 0 !important;
 }
 
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  min-height: calc(100vh - 200px);
+}
+
+.auth-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+}
+
+.auth-card h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.auth-card p {
+  color: var(--text-color-alower);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.auth-card .form-group {
+  margin-bottom: 16px;
+}
+
+.auth-card .form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-color-alower);
+  margin-bottom: 6px;
+}
+
+.auth-card .form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  color: var(--text-color);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.auth-card .form-group input:focus {
+  border-color: var(--accent-color);
+}
+
+.auth-card .btn-fill {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-color-alower);
+}
+
+.auth-footer a {
+  color: var(--accent-light);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-bottom: 12px;
+  display: none;
+}
+
+.form-error.visible {
+  display: block;
+}
+
+.form-success {
+  color: #22c55e;
+  font-size: 13px;
+  margin-bottom: 12px;
+  display: none;
+}
+
+.form-success.visible {
+  display: block;
+}
+
 .footer {
   background: var(--bg-second-color);
   border-top: 1px solid var(--border-color);
@@ -755,28 +872,6 @@ main {
   opacity: 0.5;
 }
 
-.form-error {
-  color: #ef4444;
-  font-size: 13px;
-  margin-bottom: 12px;
-  display: none;
-}
-
-.form-error.visible {
-  display: block;
-}
-
-.form-success {
-  color: #22c55e;
-  font-size: 13px;
-  margin-bottom: 12px;
-  display: none;
-}
-
-.form-success.visible {
-  display: block;
-}
-
 .modal .btn-fill {
   width: 100%;
   padding: 12px;
@@ -859,7 +954,7 @@ main {
   .mobile-menu-btn { display: block; }
   .mobile-menu { display: block; }
 
-  #page-home h1 {
+  .home-page h1 {
     font-size: 36px;
   }
 
@@ -900,11 +995,11 @@ main {
     padding: 12px 16px;
   }
 
-  #page-home {
+  .home-page {
     padding: 80px 16px 40px;
   }
 
-  #page-home h1 {
+  .home-page h1 {
     font-size: 28px;
   }
 
@@ -931,7 +1026,7 @@ main {
 }
 
 @media (min-width: 769px) and (max-width: 1100px) {
-  #page-home h1 {
+  .home-page h1 {
     font-size: 42px;
   }
 
@@ -942,4 +1037,73 @@ main {
   .tariffs-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.promo-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 32px;
+  text-align: center;
+}
+
+.promo-input-wrap {
+  display: flex;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.promo-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  color: var(--text-color);
+  font-size: 14px;
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: border-color 0.2s;
+}
+
+.promo-input:focus {
+  border-color: var(--accent-color);
+}
+
+.promo-input::placeholder {
+  color: var(--text-color-alower);
+  opacity: 0.5;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.promo-btn {
+  white-space: nowrap;
+}
+
+.promo-message {
+  font-size: 13px;
+  margin-top: 10px;
+  display: none;
+}
+
+.promo-message.visible {
+  display: block;
+}
+
+.promo-message.error {
+  color: #ef4444;
+}
+
+.promo-message.success {
+  color: #22c55e;
+}
+
+.old-price {
+  font-size: 16px;
+  color: var(--text-color-alower);
+  text-decoration: line-through;
+  opacity: 0.5;
+  font-weight: 400;
 }
