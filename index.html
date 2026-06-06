@@ -90,13 +90,6 @@
         </div>
       </section>
 
-      <section class="video-section">
-        <h2>Посмотри нашего клиента<br/>в действии</h2>
-        <p>Узнай как работает наше решение в реальной игре</p>
-        <div class="video-player">
-          <iframe src="https://www.youtube.com/embed/R2yv4UPqt8U" title="Astranor DLC Demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-      </section>
     </section>
 
     <section id="page-tariffs" class="page">
@@ -107,26 +100,40 @@
       <div class="tariffs-grid">
         <div class="tariff-card">
           <div class="tariff-header">
-            <h3>Standart</h3>
-            <div class="tariff-price">899 ₽</div>
-            <p class="tariff-period">навсегда</p>
+            <h3>Beta Client</h3>
+            <div class="tariff-price">0 ₽</div>
+            <p class="tariff-period">тестовый доступ</p>
+          </div>
+          <ul class="tariff-features">
+            <li><i class="fa-solid fa-check"></i> Базовые функции</li>
+            <li><i class="fa-solid fa-check"></i> Ограниченный функционал</li>
+            <li><i class="fa-solid fa-check"></i> Тестовые обходы</li>
+            <li><i class="fa-solid fa-xmark"></i> Полный функционал</li>
+            <li><i class="fa-solid fa-xmark"></i> Поддержка 24/7</li>
+          </ul>
+          <button class="btn-fill" onclick="buyTariff('Beta Client', 0)">Попробовать</button>
+        </div>
+        <div class="tariff-card">
+          <div class="tariff-header">
+            <h3>14 дней</h3>
+            <div class="tariff-price">499 ₽</div>
+            <p class="tariff-period">14 дней доступа</p>
           </div>
           <ul class="tariff-features">
             <li><i class="fa-solid fa-check"></i> Все функции чита</li>
             <li><i class="fa-solid fa-check"></i> Обновления</li>
-            <li><i class="fa-solid fa-check"></i> Базовые обходы</li>
+            <li><i class="fa-solid fa-check"></i> Все обходы</li>
             <li><i class="fa-solid fa-check"></i> Поддержка в чате</li>
             <li><i class="fa-solid fa-xmark"></i> Приватные обходы</li>
-            <li><i class="fa-solid fa-xmark"></i> Ранний доступ к функциям</li>
           </ul>
-          <button class="btn-fill" onclick="openModal('register')">Купить</button>
+          <button class="btn-fill" onclick="buyTariff('14 дней', 499)">Купить</button>
         </div>
         <div class="tariff-card tariff-popular">
           <div class="tariff-badge">Популярный</div>
           <div class="tariff-header">
-            <h3>Premium</h3>
-            <div class="tariff-price">1,499 ₽</div>
-            <p class="tariff-period">навсегда</p>
+            <h3>30 дней</h3>
+            <div class="tariff-price">999 ₽</div>
+            <p class="tariff-period">30 дней доступа</p>
           </div>
           <ul class="tariff-features">
             <li><i class="fa-solid fa-check"></i> Все функции чита</li>
@@ -134,15 +141,14 @@
             <li><i class="fa-solid fa-check"></i> Все обходы</li>
             <li><i class="fa-solid fa-check"></i> Приватные обходы</li>
             <li><i class="fa-solid fa-check"></i> Поддержка 24/7</li>
-            <li><i class="fa-solid fa-xmark"></i> Ранний доступ к функциям</li>
           </ul>
-          <button class="btn-fill" onclick="openModal('register')">Купить</button>
+          <button class="btn-fill" onclick="buyTariff('30 дней', 999)">Купить</button>
         </div>
         <div class="tariff-card">
           <div class="tariff-header">
-            <h3>Ultra</h3>
-            <div class="tariff-price">2,999 ₽</div>
-            <p class="tariff-period">навсегда</p>
+            <h3>Навсегда</h3>
+            <div class="tariff-price">2,499 ₽</div>
+            <p class="tariff-period">пожизненный доступ</p>
           </div>
           <ul class="tariff-features">
             <li><i class="fa-solid fa-check"></i> Все функции чита</li>
@@ -152,7 +158,7 @@
             <li><i class="fa-solid fa-check"></i> Поддержка 24/7</li>
             <li><i class="fa-solid fa-check"></i> Приватный Discord канал</li>
           </ul>
-          <button class="btn-fill" onclick="openModal('register')">Купить</button>
+          <button class="btn-fill" onclick="buyTariff('Навсегда', 2499)">Купить</button>
         </div>
       </div>
     </section>
