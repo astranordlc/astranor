@@ -35,26 +35,20 @@
       <h1>Наши тарифы</h1>
       <p>Выбери подходящий план для себя</p>
     </div>
+
+    <div class="promo-section">
+      <div class="promo-input-wrap">
+        <input type="text" id="promoCode" class="promo-input" placeholder="Ввести промокод" maxlength="20"/>
+        <button class="btn-fill promo-btn" onclick="applyPromoCode()">Применить</button>
+      </div>
+      <div id="promoMessage" class="promo-message"></div>
+    </div>
+
     <div class="tariffs-grid">
       <div class="tariff-card">
         <div class="tariff-header">
-          <h3>Beta Client</h3>
-          <div class="tariff-price">0 ₽</div>
-          <p class="tariff-period">тестовый доступ</p>
-        </div>
-        <ul class="tariff-features">
-          <li><i class="fa-solid fa-check"></i> Базовые функции</li>
-          <li><i class="fa-solid fa-check"></i> Ограниченный функционал</li>
-          <li><i class="fa-solid fa-check"></i> Тестовые обходы</li>
-          <li><i class="fa-solid fa-xmark"></i> Полный функционал</li>
-          <li><i class="fa-solid fa-xmark"></i> Поддержка 24/7</li>
-        </ul>
-        <button class="btn-fill" onclick="buyTariff('Beta Client', 0)">Попробовать</button>
-      </div>
-      <div class="tariff-card">
-        <div class="tariff-header">
           <h3>14 дней</h3>
-          <div class="tariff-price">499 ₽</div>
+          <div class="tariff-price" data-price="499">499 ₽</div>
           <p class="tariff-period">14 дней доступа</p>
         </div>
         <ul class="tariff-features">
@@ -69,8 +63,24 @@
       <div class="tariff-card tariff-popular">
         <div class="tariff-badge">Популярный</div>
         <div class="tariff-header">
+          <h3>Beta Client</h3>
+          <div class="tariff-price" data-price="1099">1,099 ₽</div>
+          <p class="tariff-period">полный функционал</p>
+        </div>
+        <ul class="tariff-features">
+          <li><i class="fa-solid fa-check"></i> Все функции чита</li>
+          <li><i class="fa-solid fa-check"></i> Обновления</li>
+          <li><i class="fa-solid fa-check"></i> Все обходы</li>
+          <li><i class="fa-solid fa-check"></i> Приватные обходы</li>
+          <li><i class="fa-solid fa-check"></i> Поддержка 24/7</li>
+          <li><i class="fa-solid fa-check"></i> Ранний доступ к функциям</li>
+        </ul>
+        <button class="btn-fill" onclick="buyTariff('Beta Client', 1099)">Купить</button>
+      </div>
+      <div class="tariff-card">
+        <div class="tariff-header">
           <h3>30 дней</h3>
-          <div class="tariff-price">999 ₽</div>
+          <div class="tariff-price" data-price="999">999 ₽</div>
           <p class="tariff-period">30 дней доступа</p>
         </div>
         <ul class="tariff-features">
@@ -85,7 +95,7 @@
       <div class="tariff-card">
         <div class="tariff-header">
           <h3>Навсегда</h3>
-          <div class="tariff-price">2,499 ₽</div>
+          <div class="tariff-price" data-price="2499">2,499 ₽</div>
           <p class="tariff-period">пожизненный доступ</p>
         </div>
         <ul class="tariff-features">
@@ -136,6 +146,13 @@
       <div>&copy; Astranor DLC, 2026. All Rights Reserved</div>
     </div>
   </footer>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div id="modalContent"></div>
+  </div>
 </div>
 
 <div class="mobile-menu" id="mobileMenu">
