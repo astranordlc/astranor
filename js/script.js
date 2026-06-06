@@ -260,7 +260,7 @@ async function updateProfileUI() {
       if (tariffEl) tariffEl.textContent = data.tariff || 'Нет';
       if (dateEl) dateEl.textContent = data.created_at ? new Date(data.created_at).toLocaleDateString('ru-RU') : '-';
       if (hwidEl) hwidEl.textContent = data.hwid || 'Не привязан';
-      if (uidEl) uidEl.textContent = data.uid || 'AST-XXXXXXXX';
+      if (uidEl) uidEl.textContent = data.uid || '0';
 
       const avatarPlaceholder = document.getElementById('avatarPlaceholder');
 
