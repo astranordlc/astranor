@@ -57,10 +57,10 @@ async function handleRegister() {
     }
 
     const userId = result.id || (result.user && result.user.id);
-    const email = result.email || (result.user && result.user.email);
+    const userEmail = result.email || (result.user && result.user.email);
 
     if (userId) {
-      window.location.href = 'confirm.html?user_id=' + encodeURIComponent(userId) + '&email=' + encodeURIComponent(email || '');
+      window.location.href = 'confirm.html?user_id=' + encodeURIComponent(userId) + '&email=' + encodeURIComponent(userEmail || '');
       return;
     }
 
