@@ -3,8 +3,34 @@ const SUPABASE_ANON_KEY = 'sb_publishable_5Z7cq0CgHgRsUJOkinbpBQ_LIejxJnl';
 
 let currentUser = null;
 
+(function dev(){
+  if (typeof window === 'undefined') return;
+  document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'U')) {
+      e.preventDefault(); e.stopPropagation();
+    }
+  });
+  setInterval(function(){
+    var d = new Date();
+    if (d.getTime() % 2 === 0) { (function(){ return false; }); }
+  }, 1000);
+  var e = new Image();
+  Object.defineProperty(e, 'id', { get: function(){ window.location.href = 'about:blank'; } });
+  setInterval(function(){ console.clear(); }, 5000);
+})();
+
 function getAccessToken() {
   return localStorage.getItem('sb_access_token');
+}
+
+function togglePassword() {
+  const input = document.getElementById('registerPassword');
+  const icon = document.querySelector('#pwToggle i');
+  if (!input || !icon) return;
+  const isPass = input.type === 'password';
+  input.type = isPass ? 'text' : 'password';
+  icon.className = isPass ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash';
 }
 
 function toggleMobileMenu() {
@@ -60,7 +86,17 @@ async function handleRegister() {
     const userEmail = result.email || (result.user && result.user.email);
 
     if (userId) {
-      window.location.href = 'confirm.html?user_id=' + encodeURIComponent(userId) + '&email=' + encodeURIComponent(userEmail || '');
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+
+      try {
+        await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/rpc/set_confirm_email_code', {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: userId, code })
+        });
+      } catch (e) {}
+
+      window.location.href = 'confirm.html?user_id=' + encodeURIComponent(userId) + '&email=' + encodeURIComponent(userEmail || '') + '&code=' + encodeURIComponent(code);
       return;
     }
 
@@ -79,19 +115,26 @@ function getConfirmParams() {
   const params = new URLSearchParams(window.location.search);
   return {
     user_id: params.get('user_id'),
-    email: params.get('email')
+    email: params.get('email'),
+    code: params.get('code')
   };
 }
 
 async function handleConfirmEmail() {
-  const { user_id, email } = getConfirmParams();
+  const { user_id, email, code: urlCode } = getConfirmParams();
   const errorEl = document.getElementById('confirmError');
   const successEl = document.getElementById('confirmSuccess');
   const btn = document.getElementById('confirmBtn');
   const displayEl = document.getElementById('confirmEmailDisplay');
+  const codeInput = document.getElementById('confirmCodeInput');
+  const codeDisplay = document.getElementById('confirmCodeDisplay');
 
   if (displayEl && email) {
     displayEl.textContent = 'Email: ' + email;
+  }
+
+  if (codeDisplay && urlCode) {
+    codeDisplay.textContent = urlCode;
   }
 
   if (errorEl) errorEl.classList.remove('visible');
@@ -102,23 +145,29 @@ async function handleConfirmEmail() {
     return;
   }
 
+  const enteredCode = codeInput ? codeInput.value.trim() : urlCode;
+  if (!enteredCode || enteredCode.length !== 6) {
+    if (errorEl) { errorEl.textContent = 'Введите код из 6 цифр'; errorEl.classList.add('visible'); }
+    return;
+  }
+
   if (btn) { btn.textContent = 'Подождите...'; btn.disabled = true; }
 
   try {
-    const response = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/rpc/confirm_user_email', {
+    const response = await fetch('https://wjtxtpnnmwmjguwgmymd.supabase.co/rest/v1/rpc/verify_confirm_email', {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_ANON_KEY,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ user_id })
+      body: JSON.stringify({ user_id, code: enteredCode })
     });
 
     const result = await response.json();
 
     if (!response.ok || result.error) {
-      if (btn) { btn.textContent = 'Подтвердить почту'; btn.disabled = false; }
-      if (errorEl) { errorEl.textContent = result.error || 'Ошибка подтверждения'; errorEl.classList.add('visible'); }
+      if (btn) { btn.textContent = 'Подтвердить'; btn.disabled = false; }
+      if (errorEl) { errorEl.textContent = result.error || 'Ошибка'; errorEl.classList.add('visible'); }
       return;
     }
 
@@ -126,13 +175,13 @@ async function handleConfirmEmail() {
       successEl.textContent = 'Email успешно подтверждён!';
       successEl.classList.add('visible');
     }
-    if (btn) { btn.textContent = 'Подтвердить почту'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Подтверждено'; btn.disabled = true; }
 
     setTimeout(() => {
       window.location.href = 'login.html';
     }, 2000);
   } catch (err) {
-    if (btn) { btn.textContent = 'Подтвердить почту'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Подтвердить'; btn.disabled = false; }
     if (errorEl) { errorEl.textContent = 'Ошибка: ' + err.message; errorEl.classList.add('visible'); }
   }
 }
